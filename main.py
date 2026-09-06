@@ -1,9 +1,12 @@
-from modelos.juego import Juego
-from modelos.catalogo import Catalogo
+from servicios.cargador_datos import cargar_catalogo
 
-catalogo = Catalogo()
-catalogo.agregar(Juego("400", "Portal", ["Puzzle", "Sci-fi"], 300, 9000, 100))
-catalogo.agregar(Juego("620", "Portal 2", ["Puzzle", "Sci-fi"], 600, 15000, 80))
+catalogo = cargar_catalogo()
 
-print(catalogo.buscar("Portal"))
-print(catalogo.filtrar_por_categoria("Puzzle"))
+print(f"Juegos cargados: {catalogo.cantidad()}")
+
+# Prueba: buscar un juego (poné acá el nombre de algún juego real que sepas
+# que está en tu muestra de datos/games.json)
+resultado = catalogo.buscar("Portal 2")
+print(resultado)
+
+print(catalogo.filtrar_por_categoria("Action")[:5])  # primeros 5 de acción

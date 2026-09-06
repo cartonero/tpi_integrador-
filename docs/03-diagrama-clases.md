@@ -1,29 +1,31 @@
-# Diagrama inicial de clases
+# Diagrama de clases
 
-> Estado: boceto TP0. Se actualiza en TP1 con la implementación real.
+> Estado: implementación real (TP1). Boceto original del TP0 reemplazado.
 
 \`\`\`mermaid
 classDiagram
     class Juego {
+        -appid: str
         -nombre: str
-        -categoria: str
-        -tiempo_estimado: float
-        -rating: float
+        -generos: list
+        -tiempo_estimado_min: float
+        -positivos: int
+        -negativos: int
+        +get_appid() str
         +get_nombre() str
-        +get_tiempo_estimado() float
-        +get_rating() float
-    }
-    class Categoria {
-        -nombre: str
-        -juegos: list
+        +get_generos() list
+        +get_categoria_principal() str
+        +get_tiempo_estimado_horas() float
+        +get_rating_porcentaje() float
     }
     class Catalogo {
         -juegos: list
+        +agregar(juego) bool
         +buscar(nombre) Juego
-        +agregar(juego) void
-        +listar_por_categoria(categoria) list
+        +buscar_por_appid(appid) Juego
+        +listar() list
+        +filtrar_por_categoria(categoria) list
+        +cantidad() int
     }
     Catalogo "1" o-- "*" Juego : contiene
-    Catalogo "1" o-- "*" Categoria : organiza
-    Categoria "1" o-- "*" Juego : agrupa
 \`\`\`

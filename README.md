@@ -1,6 +1,7 @@
 # JuegoTeca
 
-Sistema de recomendación de vídeojuegos teniendo en cuenta el tiempo que toma completarlos, permitiéndole al usuario explorar opciones sabiendo cuánto tiempo pasara disfrutando de la experiencia.
+Sistema de recomendación de videojuegos que permite buscar, listar y filtrar
+juegos por categoría, usando datos reales del **Steam Games Dataset**
 
 ## Integrantes
 

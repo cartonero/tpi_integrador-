@@ -19,7 +19,7 @@ python3 --version   # requiere Python 3.10+
 ## Ejecución 
 
 ```bash 
-python3 main.py 
+py main.py 
 ``` 
 
 ## Estructura del repositorio 

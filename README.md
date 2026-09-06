@@ -27,12 +27,10 @@ py main.py
 | Carpeta | Contenido | 
 |---|---|
 | `modelos/` | Clases del dominio (`Juego`, `Catalogo`) | 
-| `estructuras/` | Estr. de datos implementadas (BST, AVL, Heap, Grafo) | 
 | `algoritmos/` | Búsquedas, BFS/DFS, caminos mínimos | 
 | `datos/` | Datasets de prueba (JSON) | 
 | `servicios/` | Lógica de negocio (recomendador) | 
 | `ui/` | Interfaz de terminal | 
-| `tests/` | Pruebas | 
 | `docs/` | Documentación del proyecto | 
 
 ## Documentación
@@ -41,4 +39,4 @@ py main.py
 
 ## Estado del proyecto 
 
-✅ TP0 · ✅ TP1 · ⏳ TP2 
+✅ TP0 · ✅ TP1 

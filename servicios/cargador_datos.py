@@ -16,9 +16,6 @@ def cargar_catalogo(ruta_json="datos/games.json"):
             appid=datos.get("appid"),
             nombre=datos.get("name"),
             generos=datos.get("genres", []),
-            tiempo_estimado_min=datos.get("average_playtime_forever", 0),
-            positivos=datos.get("positive", 0),
-            negativos=datos.get("negative", 0),
         )
         catalogo.agregar(juego)
 

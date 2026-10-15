@@ -2,10 +2,10 @@
 algoritmos/probar_avl.py — Script de pruebas del TP4 (AVL) y TP5 (Árbol General).
 
 Corre todas las pruebas juntas, sin pasar por el menú:
-  1. Las 4 rotaciones del AVL, una por una.
-  2. Caso de desbalance: 10 elementos ORDENADOS (A..J) en BST vs AVL.
-  3. El AVL con el catálogo real de Juegoteca.
-  4. El árbol general con la jerarquía de categorías de Steam.
+    1. Las 4 rotaciones del AVL, una por una.
+    2. Caso de desbalance: 10 elementos ORDENADOS (A..J) en BST vs AVL.
+    3. El AVL con el catálogo real de Juegoteca.
+    4. El árbol general con la jerarquía de categorías de Steam.
 
 La salida de este script se pega en docs/08-analisis-tp4-tp5.md como
 evidencia de que ambas estructuras funcionan.
@@ -69,9 +69,9 @@ def probar_rotaciones():
         avl = AVL()
         for numero in orden:
             avl.insertar(numero, clave=lambda x: x)
-        assert avl.raiz.dato == 2 and avl.altura() == 2
+        assert avl.raiz.dato == 2 and avl.altura() == 2 # type: ignore
         print(f"  {nombre:<40} insertar {orden} -> "
-              f"raíz {avl.raiz.dato}, preorder {avl.preorder()}, altura {avl.altura()}")
+                f"raíz {avl.raiz.dato}, preorder {avl.preorder()}, altura {avl.altura()}") # type: ignore
     print("\nVerificación: las 4 rotaciones dejan el árbol balanceado. OK")
 
 

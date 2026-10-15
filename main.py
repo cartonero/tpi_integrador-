@@ -9,7 +9,7 @@ def construir_arboles(catalogo):
     """Inserta todos los juegos del catálogo en dos árboles, ordenados por nombre.
 
     - BST (TP3): árbol de búsqueda común. Se mantiene para los recorridos
-      y para poder comparar su altura contra la del AVL.
+    y para poder comparar su altura contra la del AVL.
     - AVL (TP4): árbol auto-balanceado. Es el que usa la opción "Buscar".
 
     Se construyen UNA sola vez, al arrancar el programa.

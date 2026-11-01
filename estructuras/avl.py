@@ -1,11 +1,28 @@
 r"""
 avl.py — Árbol AVL (Árbol Binario de Búsqueda Auto-Balanceado)
 
+Un AVL es un BST (estructuras/arbol_binario.py) que se EQUILIBRA SOLO. Después
+de cada inserción revisa que el árbol no se haya "torcido" hacia un lado y, si
+pasó, lo corrige con ROTACIONES.
+
+Por qué hace falta: si a un BST común le insertás datos ya ordenados (por
+ejemplo nombres en orden alfabético), cada nodo queda con un solo hijo y el
+árbol se vuelve una cadena de altura n: buscar cuesta O(n). El AVL mantiene la
+altura cerca de log2(n), así que buscar e insertar cuestan siempre O(log n).
+
+REGLA DEL AVL: en TODOS los nodos, el factor de balance
+    factor = altura(subárbol izquierdo) - altura(subárbol derecho)
+tiene que valer -1, 0 o +1. Si vale +2 o -2, el nodo está desbalanceado y se
+rota.
+
 Registro de rotaciones:
     - Rotación simple izquierda  (caso derecha-derecha)
     - Rotación simple derecha     (caso izquierda-izquierda)
     - Rotación doble izquierda    (caso izquierda-derecha)
     - Rotación doble derecha      (caso derecha-izquierda)
+
+En Juegoteca: main.py arma un AVL con todos los juegos (ordenados por nombre) y
+la opción "Buscar juego" del menú lo consulta.
 
 Uso:
     from estructuras.avl import AVL
@@ -23,6 +40,9 @@ class NodoAVL:
         self.dato = dato
         self.izquierdo = None
         self.derecho = None
+        # Altura del subárbol que cuelga de este nodo. Un nodo recién creado
+        # (sin hijos) tiene altura 1. Se guarda en el nodo para no tener que
+        # recalcularla recorriendo el árbol cada vez que se necesita el balance.
         self.altura = 1
 
 
@@ -34,6 +54,7 @@ class AVL:
     """
 
     def __init__(self):
+        # La raíz es el nodo de arriba de todo. None significa árbol vacío.
         self.raiz = None
 
     # ==================== UTILIDADES DE ALTURA ====================
@@ -45,17 +66,27 @@ class AVL:
         return nodo.altura
 
     def _factor_balance(self, nodo):
-        """Factor de balance = altura(izquierdo) - altura(derecho)."""
+        """Factor de balance = altura(izquierdo) - altura(derecho).
+
+        Positivo: el nodo pesa más del lado izquierdo.
+        Negativo: pesa más del lado derecho.
+        Cero: está perfectamente parejo.
+        """
         if nodo is None:
             return 0
         return self._altura(nodo.izquierdo) - self._altura(nodo.derecho)
 
     def _actualizar_altura(self, nodo):
         """Recalcula la altura de un nodo basándose en sus hijos."""
+        # Altura = 1 (el propio nodo) + la altura del hijo más alto.
         nodo.altura = 1 + max(self._altura(nodo.izquierdo),
                               self._altura(nodo.derecho))
 
     # ==================== ROTACIONES ====================
+    # Una rotación es un "giro" local de 3 nodos que cambia quién está arriba
+    # sin romper el orden del árbol (lo menor sigue a la izquierda, lo mayor a
+    # la derecha). Cada rotación devuelve el nuevo nodo que queda arriba del
+    # subárbol; quien la llamó lo engancha en el lugar del nodo anterior.
 
     def _rotacion_izquierda(self, z):
         r"""Rotación simple izquierda.
@@ -69,16 +100,18 @@ class AVL:
               / \               / \
              T2  T3            T1  T2
         """
-        y = z.derecho
-        T2 = y.izquierdo
+        y = z.derecho       # y es el hijo derecho: va a pasar a ser la nueva raíz
+        T2 = y.izquierdo    # T2 es el subárbol que queda "en el medio"
 
-        y.izquierdo = z
-        z.derecho = T2
+        y.izquierdo = z     # z baja y queda como hijo izquierdo de y
+        z.derecho = T2      # T2 (que estaba entre z e y) pasa a colgar de z
 
+        # Orden importante: primero z (ahora está más abajo) y después y,
+        # porque la altura de y depende de la nueva altura de z.
         self._actualizar_altura(z)
         self._actualizar_altura(y)
 
-        return y
+        return y  # nueva raíz de este subárbol
 
     def _rotacion_derecha(self, z):
         r"""Rotación simple derecha.
@@ -92,16 +125,17 @@ class AVL:
               / \                  / \
              T1  T2               T2  T3
         """
-        y = z.izquierdo
-        T2 = y.derecho
+        y = z.izquierdo     # y es el hijo izquierdo: va a pasar a ser la nueva raíz
+        T2 = y.derecho      # T2 es el subárbol que queda "en el medio"
 
-        y.derecho = z
-        z.izquierdo = T2
+        y.derecho = z       # z baja y queda como hijo derecho de y
+        z.izquierdo = T2    # T2 (que estaba entre y y z) pasa a colgar de z
 
+        # Mismo orden que en la rotación izquierda: primero z, después y.
         self._actualizar_altura(z)
         self._actualizar_altura(y)
 
-        return y
+        return y  # nueva raíz de este subárbol
 
     def _rotacion_izquierda_derecha(self, nodo):
         """Rotación doble izquierda-derecha.
@@ -109,6 +143,9 @@ class AVL:
         Caso: el nodo está desbalanceado hacia la izquierda (factor > 1)
         pero su hijo izquierdo está desbalanceado hacia la derecha.
         """
+        # Una sola rotación no alcanza (el "zigzag" queda torcido). Primero se
+        # rota el hijo izquierdo hacia la izquierda, lo que convierte el caso
+        # en izquierda-izquierda, y después se rota el nodo hacia la derecha.
         nodo.izquierdo = self._rotacion_izquierda(nodo.izquierdo)
         return self._rotacion_derecha(nodo)
 
@@ -118,6 +155,8 @@ class AVL:
         Caso: el nodo está desbalanceado hacia la derecha (factor < -1)
         pero su hijo derecho está desbalanceado hacia la izquierda.
         """
+        # Es la imagen en espejo del caso anterior: primero se rota el hijo
+        # derecho hacia la derecha y después el nodo hacia la izquierda.
         nodo.derecho = self._rotacion_derecha(nodo.derecho)
         return self._rotacion_izquierda(nodo)
 
@@ -129,10 +168,17 @@ class AVL:
         clave es una función que devuelve el valor de ordenamiento.
         Ejemplo: clave=lambda p: p.titulo.lower()
         """
+        # Se reasigna la raíz porque una rotación puede cambiar qué nodo
+        # queda arriba de todo.
         self.raiz = self._insertar_recursivo(self.raiz, dato, clave)
 
     def _insertar_recursivo(self, nodo, dato, clave):
-        """Recursión que inserta y luego balancea el camino de vuelta."""
+        """Recursión que inserta y luego balancea el camino de vuelta.
+
+        Primero BAJA por el árbol como un BST común hasta encontrar el lugar
+        libre. Después, al volver de la recursión (hacia arriba), revisa cada
+        nodo del camino: actualiza su altura y, si quedó desbalanceado, rota.
+        """
         # Paso 1: inserción estándar como en un BST
         if nodo is None:
             return NodoAVL(dato)
@@ -150,7 +196,10 @@ class AVL:
         # Paso 3: obtener el factor de balance
         balance = self._factor_balance(nodo)
 
-        # Paso 4: si está desbalanceado, aplicar la rotación correspondiente
+        # Paso 4: si está desbalanceado, aplicar la rotación correspondiente.
+        # El balance dice HACIA QUÉ LADO pesa el nodo (>1 izquierda, <-1 derecha)
+        # y comparar el dato nuevo con el hijo dice en qué rama quedó el dato
+        # (si fue "recto" o en "zigzag"). De ahí salen los 4 casos:
         # Caso 1: Izquierda-Izquierda (factor > 1 y el hijo izquierdo está a la izquierda)
         if balance > 1 and clave(dato) < clave(nodo.izquierdo.dato):
             return self._rotacion_derecha(nodo)
@@ -167,6 +216,7 @@ class AVL:
         if balance < -1 and clave(dato) < clave(nodo.derecho.dato):
             return self._rotacion_derecha_izquierda(nodo)
 
+        # Si el balance está en -1, 0 o +1 no hace falta rotar.
         return nodo
 
     # ==================== BÚSQUEDA ====================
@@ -180,8 +230,11 @@ class AVL:
         return self._buscar_recursivo(self.raiz, valor, clave)
 
     def _buscar_recursivo(self, nodo, valor, clave):
+        # Igual que en el BST: en cada nodo se descarta una de las dos mitades.
+        # La diferencia es que acá el árbol siempre está balanceado, así que
+        # la cantidad de pasos es como mucho la altura (≈ log2 n).
         if nodo is None:
-            return None
+            return None  # no está en el árbol
         valor_nodo = clave(nodo.dato)
         if valor == valor_nodo:
             return nodo.dato
@@ -190,6 +243,7 @@ class AVL:
         return self._buscar_recursivo(nodo.derecho, valor, clave)
 
     # ==================== RECORRIDOS ====================
+    # Mismos tres recorridos que el BST, cada uno O(n).
 
     def inorder(self):
         """Izquierda → raíz → derecha. Devuelve elementos ORDENADOS."""
@@ -231,16 +285,18 @@ class AVL:
 
     def altura(self):
         """Retorna la altura del árbol. Árbol vacío → 0."""
+        # O(1): la altura ya está guardada en la raíz (no hay que recorrer nada).
         return self._altura(self.raiz)
 
     def esta_vacio(self):
         return self.raiz is None
 
     def __len__(self):
-        """Cantidad de nodos en el árbol."""
+        """Cantidad de nodos en el árbol. Permite usar len(avl)."""
         return self._contar_nodos(self.raiz)
 
     def _contar_nodos(self, nodo):
+        # Un nodo cuenta 1 más todos los de su rama izquierda y derecha.
         if nodo is None:
             return 0
         return 1 + self._contar_nodos(nodo.izquierdo) + self._contar_nodos(nodo.derecho)
@@ -257,11 +313,13 @@ def comparar_bst_vs_avl(lista_datos, clave):
     import time
 
     # --- BST común (usa estructuras/arbol_binario.py del TP3) ---
+    # El import está acá adentro porque solo se necesita al comparar.
     try:
         from estructuras.arbol_binario import ArbolBST
     except ImportError:
         return {"error": "No se encontró estructuras/arbol_binario.py para comparar"}
 
+    # Se insertan los MISMOS datos, en el mismo orden, en los dos árboles.
     bst = ArbolBST()
     for d in lista_datos:
         bst.insertar(d, clave=clave)
@@ -271,7 +329,8 @@ def comparar_bst_vs_avl(lista_datos, clave):
     for d in lista_datos:
         avl.insertar(d, clave=clave)
 
-    # Medir tiempo de búsqueda en ambos
+    # Medir tiempo de búsqueda en ambos: se busca 1000 veces el primer
+    # elemento y se toma el tiempo total, en milisegundos.
     valor_test = clave(lista_datos[0])
 
     inicio = time.time()
@@ -294,6 +353,8 @@ def comparar_bst_vs_avl(lista_datos, clave):
 
 
 # ==================== EJEMPLO DE USO ====================
+# Este bloque solo corre al ejecutar el archivo directamente
+# (py -m estructuras.avl); NO se ejecuta cuando otro módulo lo importa.
 
 if __name__ == "__main__":
     class Elemento:

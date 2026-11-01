@@ -10,6 +10,10 @@ Corre todas las pruebas juntas, sin pasar por el menú:
 La salida de este script se pega en docs/08-analisis-tp4-tp5.md como
 evidencia de que ambas estructuras funcionan.
 
+Las pruebas usan `assert`: si una condición es falsa el programa se detiene
+con un AssertionError. Si termina mostrando "TODAS LAS PRUEBAS PASARON",
+todas las condiciones se cumplieron.
+
 Correr desde la raíz del proyecto con:
     py -m algoritmos.probar_avl
 """
@@ -29,6 +33,7 @@ class Elemento:
         self.valor = valor
 
     def __repr__(self):
+        # Texto al imprimir: por ejemplo "A(1)"
         return f"{self.nombre}({self.valor})"
 
 
@@ -38,15 +43,20 @@ def verificar_balance(nodo):
     Revisa que en TODOS los nodos la diferencia de alturas entre el hijo
     izquierdo y el derecho sea -1, 0 o +1 (la regla del AVL).
     """
+    # Un árbol vacío está balanceado y tiene altura 0.
     if nodo is None:
         return True, 0
+    # Se revisa recursivamente cada subárbol (cada uno devuelve su estado y su altura).
     ok_izq, alt_izq = verificar_balance(nodo.izquierdo)
     ok_der, alt_der = verificar_balance(nodo.derecho)
+    # El nodo está bien si ambos subárboles están bien Y sus alturas difieren
+    # en 1 como máximo.
     ok = ok_izq and ok_der and abs(alt_izq - alt_der) <= 1
     return ok, 1 + max(alt_izq, alt_der)
 
 
 def titulo(texto):
+    """Imprime un título entre dos líneas de '=' para separar las secciones."""
     print("\n" + "=" * 70)
     print(texto)
     print("=" * 70)
@@ -55,10 +65,13 @@ def titulo(texto):
 # ==================== 1. ROTACIONES ====================
 
 def probar_rotaciones():
+    """Fuerza cada una de las 4 rotaciones con solo 3 inserciones."""
     titulo("1. LAS 4 ROTACIONES DEL AVL")
     print("Cada caso inserta 3 números que desbalancean el árbol. Si la rotación")
     print("funciona, el 2 queda como raíz y el árbol queda con altura 2.\n")
 
+    # Cada caso es (nombre, orden de inserción). Con 3 números, el orden
+    # determina qué desbalance se produce y por lo tanto qué rotación hace falta.
     casos = [
         ("Simple derecha (izquierda-izquierda)", [3, 2, 1]),
         ("Simple izquierda (derecha-derecha)", [1, 2, 3]),
@@ -68,7 +81,10 @@ def probar_rotaciones():
     for nombre, orden in casos:
         avl = AVL()
         for numero in orden:
+            # La clave es el número mismo (x -> x).
             avl.insertar(numero, clave=lambda x: x)
+        # Sin rotación, el 3-2-1 sería una cadena de altura 3 con el 3 (o el 1)
+        # arriba. Si la rotación funcionó, el 2 queda en la raíz y la altura es 2.
         assert avl.raiz.dato == 2 and avl.altura() == 2 # type: ignore
         print(f"  {nombre:<40} insertar {orden} -> "
                 f"raíz {avl.raiz.dato}, preorder {avl.preorder()}, altura {avl.altura()}") # type: ignore
@@ -78,10 +94,13 @@ def probar_rotaciones():
 # ==================== 2. DESBALANCE: BST vs AVL ====================
 
 def probar_desbalance():
+    """Inserta A..J en orden y compara cómo queda el BST contra el AVL."""
     titulo("2. DATOS ORDENADOS (A..J): BST común vs AVL")
+    # enumerate(..., start=1) numera las letras desde 1: A(1), B(2), ..., J(10).
     datos = [Elemento(letra, i) for i, letra in enumerate("ABCDEFGHIJ", start=1)]
     clave = lambda x: x.nombre.lower()
 
+    # Se insertan los MISMOS datos, en el mismo orden, en los dos árboles.
     bst = ArbolBST()
     avl = AVL()
     for dato in datos:
@@ -102,6 +121,9 @@ def probar_desbalance():
     print("Buscar 'F':", avl.buscar("f", clave=clave))
     print("Buscar 'Z':", avl.buscar("z", clave=clave))
 
+    # Verificaciones automáticas: el inorder tiene que coincidir con la lista
+    # ordenada, el AVL tiene que cumplir la regla de balance en todos los
+    # nodos, y las alturas tienen que ser las esperadas (10 y 4).
     balanceado, _ = verificar_balance(avl.raiz)
     assert avl.inorder() == sorted(datos, key=clave)
     assert balanceado and bst.altura() == 10 and avl.altura() == 4
@@ -111,6 +133,7 @@ def probar_desbalance():
 # ==================== 3. AVL CON EL CATÁLOGO REAL ====================
 
 def probar_avl_catalogo():
+    """Arma el AVL con los 2000 juegos reales y busca un juego."""
     titulo("3. AVL CON EL CATÁLOGO REAL DE JUEGOTECA")
     catalogo = cargar_catalogo()
     juegos = catalogo.listar()
@@ -125,6 +148,7 @@ def probar_avl_catalogo():
     print(f"Juegos en el catálogo : {len(juegos)}")
     print(f"Altura del BST        : {bst.altura()}")
     print(f"Altura del AVL        : {avl.altura()}")
+    # El AVL no guarda nombres repetidos, por eso tiene un nodo menos que juegos.
     print(f"Nodos del AVL         : {len(avl)} (ignora nombres repetidos)")
 
     print("\n--- inorder del AVL (primeros 5) ---")
@@ -137,6 +161,7 @@ def probar_avl_catalogo():
     print("Buscar 'juego que no existe zzz':",
           avl.buscar("juego que no existe zzz", clave=clave))
 
+    # Comprueba que el AVL real cumple la regla de balance en TODOS sus nodos.
     balanceado, _ = verificar_balance(avl.raiz)
     assert balanceado
     print("\nVerificación: todos los nodos con balance -1/0/+1. OK")
@@ -145,6 +170,7 @@ def probar_avl_catalogo():
 # ==================== 4. ÁRBOL GENERAL ====================
 
 def probar_arbol_general():
+    """Arma el árbol de categorías y prueba sus recorridos y búsquedas."""
     titulo("4. ÁRBOL GENERAL: JERARQUÍA DE CATEGORÍAS DE STEAM")
     catalogo = cargar_catalogo()
     arbol = construir_arbol_categorias(catalogo)
@@ -153,6 +179,8 @@ def probar_arbol_general():
     print(f"Cantidad de nodos : {arbol.cantidad_nodos()}")
     print(f"Altura            : {arbol.altura()}")
 
+    # Se muestran solo los primeros 8 elementos de cada recorrido ([:8]).
+    # Amplitud = nivel por nivel; preorder/postorder = en profundidad.
     print("\n--- Recorrido en AMPLITUD (primeros 8) ---")
     print(" ", arbol.amplitud()[:8])
 
@@ -165,6 +193,7 @@ def probar_arbol_general():
     print("\n--- Niveles ---")
     for i, nivel in enumerate(arbol.obtener_niveles()):
         print(f"Nivel {i}:")
+        # textwrap.fill parte la lista larga de géneros en renglones de 70 caracteres.
         print(textwrap.fill(", ".join(nivel), width=70,
                             initial_indent="  ", subsequent_indent="  "))
 
@@ -174,6 +203,7 @@ def probar_arbol_general():
     print("Buscar 'Indie':", arbol.buscar("Indie"))
     print("Buscar 'Zzz':", arbol.buscar("Zzz"))
 
+    # 31 nodos = 1 raíz + 4 grupos + 26 géneros; altura 3 = raíz, grupos, géneros.
     assert arbol.cantidad_nodos() == 31 and arbol.altura() == 3
     assert arbol.buscar("Indie") is not None and arbol.buscar("Zzz") is None
     print("\nVerificación: 31 nodos, altura 3, búsquedas correctas. OK")
@@ -187,5 +217,6 @@ def main():
     titulo("TODAS LAS PRUEBAS PASARON")
 
 
+# Este bloque solo corre al ejecutar el archivo directamente, no al importarlo.
 if __name__ == "__main__":
     main()

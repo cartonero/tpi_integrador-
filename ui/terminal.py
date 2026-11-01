@@ -1,8 +1,30 @@
+"""
+ui/terminal.py — Interfaz de terminal (menú) de Juegoteca.
+
+Este módulo es la CAPA DE INTERFAZ: se encarga solo de mostrar menús, leer
+lo que escribe el usuario (input) y mostrar resultados (print). No guarda
+datos ni implementa árboles: recibe las estructuras ya construidas por
+main.py y les hace consultas.
+
+Estructuras que usa cada opción del menú:
+    1. Buscar juego            -> AVL (búsqueda por nombre, O(log n))
+    2. Listar juegos           -> Catalogo (lista completa, paginada)
+    3. Filtrar por categoría   -> Catalogo (recorre la lista)
+    4. Ver recorridos del BST  -> BST (inorder, preorder, postorder)
+    5. Explorar categorías     -> Árbol general (grupos de Steam -> géneros)
+
+Convención: las funciones que empiezan con guion bajo (_formatear_juego,
+_navegar_generos, ...) son auxiliares internas de este módulo; las demás
+las usa el menú principal.
+"""
 import textwrap
 
 
+# ==================== MENÚ PRINCIPAL ====================
+
 def mostrar_menu():
-    print("=" * 40)
+    """Imprime las opciones del menú principal."""
+    print("=" * 40)  # "=" * 40 repite el carácter 40 veces: una línea separadora
     print(" JUEGOTECA — TERMINAL")
     print("=" * 40)
     print("1. Buscar juego")
@@ -14,6 +36,8 @@ def mostrar_menu():
     print("-" * 40)
 
 
+# ==================== OPCIÓN 1: BUSCAR (AVL) ====================
+
 def ejecutar_buscar(avl):
     """Busca usando el ÁRBOL AVL (TP4).
 
@@ -22,29 +46,43 @@ def ejecutar_buscar(avl):
       - TP3: BST, O(log n) en promedio pero O(n) si se desbalancea.
       - TP4: AVL, O(log n) garantizado porque se auto-balancea con rotaciones.
     """
-    nombre = input("Nombre del juego: ").strip()
+    nombre = input("Nombre del juego: ").strip()  # strip() saca espacios de los bordes
+
+    # El árbol compara en minúsculas, así que pasamos el nombre en minúsculas.
+    # El parámetro "clave" es la MISMA función con la que se insertaron los
+    # juegos en main.py (nombre en minúsculas): el árbol la usa en cada nodo
+    # para decidir si seguir por la izquierda (menor) o por la derecha (mayor).
     juego = avl.buscar(nombre.lower(), clave=lambda j: j.get_nombre().lower())
+
+    # buscar() devuelve el Juego encontrado o None si no existe.
     if juego is None:
         print(f"No se encontró ningún juego llamado '{nombre}'.")
     else:
         print(juego)
 
 
+# ==================== OPCIÓN 2: LISTAR (CON PAGINADO) ====================
+
 def ejecutar_listar(catalogo):
+    """Muestra todos los juegos de a 20 por pantalla (paginado)."""
     juegos = catalogo.listar()
     if not juegos:
         print("El catálogo está vacío.")
         return
 
-    tamano_pagina = 20
-    inicio = 0
+    tamano_pagina = 20  # cuántos juegos se muestran por vez
+    inicio = 0          # posición del primer juego de la página actual
 
     while inicio < len(juegos):
+        # Slicing: juegos[a:b] toma los elementos desde la posición a hasta b-1.
         pagina = juegos[inicio:inicio + tamano_pagina]
         for juego in pagina:
             print(juego)
 
+        # Avanzamos a la página siguiente.
         inicio += tamano_pagina
+
+        # Si todavía quedan juegos, preguntamos si seguir o volver al menú.
         if inicio < len(juegos):
             seguir = input(
                 f"\nMostrados {inicio} de {len(juegos)}. "
@@ -54,13 +92,19 @@ def ejecutar_listar(catalogo):
                 break
 
 
+# ==================== OPCIÓN 3: FILTRAR POR CATEGORÍA ====================
+
 def ejecutar_filtrar(catalogo):
+    """Muestra los juegos que pertenecen a una categoría (género) escrita por el usuario."""
     categoria = input("Categoría a buscar (ej: Action, Indie, RPG): ").strip()
+
+    # El filtrado lo hace el Catalogo (recorre la lista y compara géneros).
     resultados = catalogo.filtrar_por_categoria(categoria)
     if not resultados:
         print(f"No se encontraron juegos en la categoría '{categoria}'.")
         return
 
+    # Se muestran solo los primeros 20 para no llenar la pantalla.
     print(f"\n{len(resultados)} juego(s) encontrados:")
     for juego in resultados[:20]:
         print(juego)
@@ -68,38 +112,67 @@ def ejecutar_filtrar(catalogo):
         print(f"... y {len(resultados) - 20} más.")
 
 
+# ==================== FORMATO DE LÍNEAS ====================
+
 def _formatear_juego(indice, juego, ancho_nombre=45):
     """Formatea una línea 'N. Nombre (Categoría)' con el nombre truncado
     si es muy largo, para que la lista quede alineada en la terminal."""
     nombre = juego.get_nombre()
+
+    # Si el nombre es más largo que el ancho permitido, lo cortamos y
+    # le agregamos "..." (se le resta 3 para que entren los tres puntos).
     if len(nombre) > ancho_nombre:
         nombre = nombre[:ancho_nombre - 3] + "..."
+
+    # Formato de la línea:
+    #   {indice:>2}              -> número alineado a la derecha, 2 de ancho
+    #   {nombre:<{ancho_nombre}} -> nombre alineado a la izquierda, rellenado
+    #                               con espacios hasta el ancho indicado
     return f"  {indice:>2}. {nombre:<{ancho_nombre}} ({juego.get_categoria_principal()})"
 
+
+# ==================== OPCIÓN 4: RECORRIDOS DEL BST ====================
 
 def ejecutar_recorridos(bst, avl):
     """Muestra los 3 recorridos del BST (TP3), limitados a 15 elementos,
     y compara la altura del BST contra la del AVL (TP4)."""
+    # Cada recorrido devuelve una lista con TODOS los juegos del árbol
+    # (2000), pero mostramos solo los primeros 15 con [:15].
+    # enumerate(..., start=1) numera las líneas desde 1.
+
+    # INORDER (izquierda -> raíz -> derecha): sale ORDENADO alfabéticamente.
     print("\n--- INORDER (ordenado alfabéticamente) ---")
     for i, juego in enumerate(bst.inorder()[:15], start=1):
         print(_formatear_juego(i, juego))
 
+    # PREORDER (raíz -> izquierda -> derecha): primero el nodo, después sus
+    # hijos. Sirve para ver la forma del árbol: el primero es la raíz.
     print("\n--- PREORDER ---")
     for i, juego in enumerate(bst.preorder()[:15], start=1):
         print(_formatear_juego(i, juego))
 
+    # POSTORDER (izquierda -> derecha -> raíz): primero los hijos y al
+    # final el nodo. Los primeros que salen son hojas.
     print("\n--- POSTORDER ---")
     for i, juego in enumerate(bst.postorder()[:15], start=1):
         print(_formatear_juego(i, juego))
 
     print("\n(Se muestran los primeros 15 de cada recorrido.)")
+
+    # Comparación de alturas: con los mismos juegos, el AVL queda más bajo
+    # (más balanceado) que el BST, y por eso busca más rápido.
     print(f"Altura del BST: {bst.altura()} | Altura del AVL: {avl.altura()} "
           f"(el AVL se balancea solo con rotaciones)")
 
 
-# ==================== EXPLORAR CATEGORÍAS (TP5, árbol general) ====================
+# ==================== OPCIÓN 5: EXPLORAR CATEGORÍAS (TP5, árbol general) ====================
+# La jerarquía tiene 3 niveles:  Juegoteca (raíz) -> grupos -> géneros.
+# Las funciones de abajo bajan de a un nivel: primero se elige un grupo
+# (_navegar_categorias), después un género (_navegar_generos) y por último se
+# muestran los juegos de ese género (_mostrar_juegos_de_genero).
 
 def _contar_juegos(catalogo, genero):
+    """Cantidad de juegos del catálogo que tienen ese género."""
     return len(catalogo.filtrar_por_categoria(genero))
 
 
@@ -110,15 +183,19 @@ def _texto_juegos(cantidad):
 
 def _elegir_nodo(nodos, texto):
     """Devuelve el nodo elegido por número (1..N), o None si no es válido."""
+    # isdigit() es True solo si el texto son únicamente dígitos ("3" sí, "x" no).
     if not texto.isdigit():
         return None
     indice = int(texto)
+    # El usuario ve la lista numerada desde 1, pero la lista de Python
+    # empieza en 0: por eso se accede con indice - 1.
     if 1 <= indice <= len(nodos):
         return nodos[indice - 1]
     return None
 
 
 def _mostrar_juegos_de_genero(genero, catalogo, maximo=20):
+    """Lista los juegos de un género (hasta `maximo`) usando el catálogo."""
     juegos = catalogo.filtrar_por_categoria(genero)
     if not juegos:
         print(f"\nNo hay juegos de '{genero}' en el catálogo.")
@@ -135,22 +212,26 @@ def _navegar_generos(grupo, catalogo):
     """Segundo nivel: los géneros (hijos) de un grupo."""
     while True:
         print(f"\n--- {grupo.dato.upper()} ---")
+
+        # grupo.hijos es la lista de nodos hijos del grupo en el árbol general:
+        # cada hijo es un género. Mostramos cuántos juegos tiene cada uno.
         for i, genero in enumerate(grupo.hijos, start=1):
             cantidad = _contar_juegos(catalogo, genero.dato)
             print(f"  {i:>2}. {genero.dato:<25} {_texto_juegos(cantidad):>12}")
 
         eleccion = input("Elegí un género para ver sus juegos (0 para volver): ").strip()
         if eleccion == "0":
-            return
+            return  # vuelve al nivel de los grupos
         genero = _elegir_nodo(grupo.hijos, eleccion)
         if genero is None:
             print("Opción inválida, probá de nuevo.")
-            continue
+            continue  # vuelve a mostrar la lista de géneros
         _mostrar_juegos_de_genero(genero.dato, catalogo)
 
 
 def _navegar_categorias(arbol_categorias, catalogo):
     """Primer nivel: los grupos (hijos de la raíz del árbol general)."""
+    # Los hijos de la raíz son los 4 grupos (Juegos, Modalidad de acceso, ...).
     grupos = arbol_categorias.raiz.hijos
     while True:
         print("\n--- GRUPOS DE CATEGORÍAS ---")
@@ -159,32 +240,45 @@ def _navegar_categorias(arbol_categorias, catalogo):
 
         eleccion = input("Elegí un grupo (0 para volver): ").strip()
         if eleccion == "0":
-            return
+            return  # vuelve al submenú de Explorar categorías
         grupo = _elegir_nodo(grupos, eleccion)
         if grupo is None:
             print("Opción inválida, probá de nuevo.")
             continue
-        _navegar_generos(grupo, catalogo)
+        _navegar_generos(grupo, catalogo)  # baja un nivel: los géneros del grupo
 
 
 def _imprimir_arbol(nodo, catalogo, nivel=0):
     """Recorrido en PROFUNDIDAD (preorder): imprime el nodo y después sus
     hijos, con sangría según el nivel. Las hojas (géneros) muestran cuántos
     juegos tienen."""
+    # Sangría: 4 espacios por cada nivel de profundidad (raíz = 0 espacios).
     sangria = "    " * nivel
+
+    # Una HOJA es un nodo sin hijos. Las hojas son los géneros, así que
+    # mostramos cuántos juegos tienen. (nivel > 0 evita tratar la raíz
+    # como hoja si el árbol estuviera vacío de hijos.)
     if not nodo.hijos and nivel > 0:
         cantidad = _contar_juegos(catalogo, nodo.dato)
         print(f"{sangria}- {nodo.dato} ({_texto_juegos(cantidad)})")
     else:
         print(f"{sangria}{nodo.dato}")
+
+    # RECURSIÓN: la función se llama a sí misma para cada hijo, uno nivel
+    # más abajo. Así se recorre el árbol entero: nodo, luego su primer hijo
+    # completo (con todos sus descendientes), luego el segundo, etc.
     for hijo in nodo.hijos:
         _imprimir_arbol(hijo, catalogo, nivel + 1)
 
 
 def _imprimir_por_niveles(arbol_categorias):
     """Recorrido en AMPLITUD (BFS): nivel por nivel, de arriba hacia abajo."""
+    # obtener_niveles() devuelve una lista de listas:
+    # [[raíz], [los 4 grupos], [los 26 géneros]]
     for i, nivel in enumerate(arbol_categorias.obtener_niveles()):
         print(f"\nNivel {i}:")
+        # textwrap.fill parte el texto en renglones de hasta 70 caracteres
+        # para que la lista larga de géneros no se salga de la pantalla.
         print(textwrap.fill(", ".join(nivel), width=70,
                             initial_indent="  ", subsequent_indent="  "))
 
@@ -192,6 +286,7 @@ def _imprimir_por_niveles(arbol_categorias):
 def ejecutar_explorar_categorias(arbol_categorias, catalogo):
     """Explorar categorías (TP5): usa el ÁRBOL GENERAL con la jerarquía de
     categorías (grupos de Steam -> géneros)."""
+    # Submenú con su propio bucle: se repite hasta que el usuario elige 0.
     while True:
         print("\n--- EXPLORAR CATEGORÍAS ---")
         print("1. Navegar por grupos y géneros")
@@ -208,16 +303,24 @@ def ejecutar_explorar_categorias(arbol_categorias, catalogo):
         elif opcion == "3":
             _imprimir_por_niveles(arbol_categorias)
         elif opcion == "0":
-            return
+            return  # sale de esta función y vuelve al menú principal
         else:
             print("Opción inválida, probá de nuevo.")
 
 
+# ==================== BUCLE PRINCIPAL ====================
+
 def iniciar(catalogo, bst, avl, arbol_categorias):
-    while True:
+    """Bucle principal del programa: muestra el menú y ejecuta la opción elegida.
+
+    Recibe las estructuras ya construidas (las arma main.py) y se las pasa a
+    la función que corresponde a cada opción.
+    """
+    while True:  # se repite hasta que el usuario elige "0. Salir"
         mostrar_menu()
         opcion = input("Opción: ").strip()
 
+        # Despachamos según la opción elegida.
         if opcion == "1":
             ejecutar_buscar(avl)
         elif opcion == "2":
@@ -230,7 +333,7 @@ def iniciar(catalogo, bst, avl, arbol_categorias):
             ejecutar_explorar_categorias(arbol_categorias, catalogo)
         elif opcion == "0":
             print("¡Hasta luego!")
-            break
+            break  # corta el while True y termina el programa
         else:
             print("Opción inválida, probá de nuevo.")
 

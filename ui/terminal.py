@@ -13,6 +13,7 @@ Estructuras que usa cada opción del menú:
     4. Ver recorridos del BST  -> BST (inorder, preorder, postorder)
     5. Explorar categorías     -> Árbol general (grupos de Steam -> géneros)
     6. Mostrar duración        -> AVL (busca el juego) y su tiempo de juego
+    7. Comparar tiempo de juego -> AVL (busca cada juego) y los ordena por tiempo
 
 Convención: las funciones que empiezan con guion bajo (_formatear_juego,
 _navegar_generos, ...) son auxiliares internas de este módulo; las demás
@@ -20,7 +21,7 @@ las usa el menú principal.
 """
 import textwrap
 
-from servicios.juegos import formatear_duracion
+from servicios.juegos import formatear_duracion, comparar_tiempos
 
 
 # ==================== MENÚ PRINCIPAL ====================
@@ -36,6 +37,7 @@ def mostrar_menu():
     print("4. Ver recorridos del BST (inorder / preorder / postorder)")
     print("5. Explorar categorías")
     print("6. Mostrar duración estimada de un juego")
+    print("7. Comparar tiempo de juego de dos o más juegos")
     print("0. Salir")
     print("-" * 40)
 
@@ -124,15 +126,19 @@ def ejecutar_filtrar(catalogo):
 
 # ==================== FORMATO DE LÍNEAS ====================
 
+def _recortar(texto, ancho):
+    """Corta el texto si es más largo que `ancho` y le agrega '...' al final."""
+    # Se le resta 3 al ancho para que entren los tres puntos.
+    if len(texto) > ancho:
+        return texto[:ancho - 3] + "..."
+    return texto
+
+
 def _formatear_juego(indice, juego, ancho_nombre=45):
     """Formatea una línea 'N. Nombre (Categoría)' con el nombre truncado
     si es muy largo, para que la lista quede alineada en la terminal."""
-    nombre = juego.get_nombre()
-
-    # Si el nombre es más largo que el ancho permitido, lo cortamos y
-    # le agregamos "..." (se le resta 3 para que entren los tres puntos).
-    if len(nombre) > ancho_nombre:
-        nombre = nombre[:ancho_nombre - 3] + "..."
+    # Si el nombre es más largo que el ancho permitido, se corta con "...".
+    nombre = _recortar(juego.get_nombre(), ancho_nombre)
 
     # Formato de la línea:
     #   {indice:>2}              -> número alineado a la derecha, 2 de ancho
@@ -339,6 +345,83 @@ def ejecutar_duracion(avl):
               "(tiempo de juego promedio en Steam)")
 
 
+# ==================== OPCIÓN 7: COMPARAR TIEMPO DE JUEGO (F3) ====================
+
+def _linea_comparacion(posicion, juego, minutos_base, ancho_nombre=40):
+    """Una línea del ranking: posición, nombre, tiempo y diferencia con el más corto."""
+    nombre = _recortar(juego.get_nombre(), ancho_nombre)
+    tiempo = formatear_duracion(juego.get_tiempo_min())
+
+    # Diferencia respecto del juego MÁS CORTO (el primero de la lista ordenada).
+    diferencia = juego.get_tiempo_min() - minutos_base
+    if posicion == 1:
+        extra = "(el más corto)"
+    elif diferencia == 0:
+        extra = "(igual que el más corto)"
+    else:
+        extra = f"(+{formatear_duracion(diferencia)})"
+
+    return f"  {posicion:>2}. {nombre:<{ancho_nombre}} {tiempo:>12}  {extra}"
+
+
+def ejecutar_comparar(avl):
+    """Compara el tiempo de juego de dos o más juegos.
+
+    Los nombres se piden de a uno por línea (y no separados por coma)
+    porque algunos nombres de juegos llevan comas, por ejemplo
+    "Ready, Steady, Ship!".
+    """
+    print("Ingresá los juegos a comparar, uno por línea.")
+    print("Enter vacío para terminar (mínimo 2 juegos).")
+
+    juegos = []  # juegos encontrados, sin repetir
+    while True:
+        numero = len(juegos) + 1
+        # Del tercer juego en adelante se avisa cómo terminar.
+        pedido = f"Juego {numero}: " if numero <= 2 else f"Juego {numero} (Enter para terminar): "
+        nombre = input(pedido).strip()
+
+        if nombre == "":
+            break  # Enter vacío: terminó de cargar nombres
+
+        juego = _buscar_juego(avl, nombre)  # búsqueda O(log n) en el AVL
+        if juego is None:
+            print(f"  No se encontró ningún juego llamado '{nombre}'. Probá con otro.")
+        elif juego in juegos:
+            # El AVL devuelve siempre el mismo objeto para el mismo nombre,
+            # así que "in" detecta si ya lo habíamos ingresado.
+            print(f"  '{juego.get_nombre()}' ya está en la comparación.")
+        else:
+            juegos.append(juego)
+
+    if len(juegos) < 2:
+        print("Hacen falta al menos 2 juegos para comparar.")
+        return
+
+    # La lógica de ordenar y separar está en servicios/juegos.py.
+    con_datos, sin_datos = comparar_tiempos(juegos)
+
+    if len(con_datos) < 2:
+        print("\nNo se puede comparar: hacen falta al menos 2 juegos con datos de duración.")
+    else:
+        print("\n--- COMPARACIÓN DE TIEMPO DE JUEGO (de menor a mayor) ---")
+        minutos_base = con_datos[0].get_tiempo_min()
+        for i, juego in enumerate(con_datos, start=1):
+            print(_linea_comparacion(i, juego, minutos_base))
+
+        mas_corto, mas_largo = con_datos[0], con_datos[-1]
+        if mas_corto.get_tiempo_min() == mas_largo.get_tiempo_min():
+            print("\nTodos tienen el mismo tiempo de juego.")
+        else:
+            print(f"\nEl más corto es {mas_corto.get_nombre()} "
+                  f"y el más largo es {mas_largo.get_nombre()}.")
+
+    # Los juegos sin dato no entran en el ranking, pero se avisa cuáles son.
+    if sin_datos:
+        nombres = ", ".join(j.get_nombre() for j in sin_datos)
+        print(f"Sin datos de duración (no se pueden comparar): {nombres}")
+
+
 # ==================== BUCLE PRINCIPAL ====================
 
 def iniciar(catalogo, bst, avl, arbol_categorias):
@@ -364,6 +447,8 @@ def iniciar(catalogo, bst, avl, arbol_categorias):
             ejecutar_explorar_categorias(arbol_categorias, catalogo)
         elif opcion == "6":
             ejecutar_duracion(avl)
+        elif opcion == "7":
+            ejecutar_comparar(avl)
         elif opcion == "0":
             print("¡Hasta luego!")
             break  # corta el while True y termina el programa

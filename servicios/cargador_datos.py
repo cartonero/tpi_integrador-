@@ -37,14 +37,16 @@ def cargar_catalogo(ruta_json=RUTA_JSON_POR_DEFECTO):
         juegos_raw = json.load(archivo)
 
     for datos in juegos_raw:
-        # Cada diccionario trae más campos (tiempo de juego, votos...), pero
-        # el modelo Juego solo usa estos tres. .get() devuelve el valor por
+        # Cada diccionario trae más campos (por ejemplo los votos), pero el
+        # modelo Juego solo usa estos cuatro. .get() devuelve el valor por
         # defecto si la clave no existe, así un registro incompleto no
-        # rompe la carga.
+        # rompe la carga. average_playtime_forever es el tiempo de juego
+        # promedio en minutos (0 si no hay datos).
         juego = Juego(
-            appid=datos.get("appid"),
-            nombre=datos.get("name"),
-            generos=datos.get("genres", []),
+            datos.get("appid"),
+            datos.get("name"),
+            datos.get("genres", []),
+            datos.get("average_playtime_forever", 0),
         )
         # agregar() descarta los juegos cuyo appid ya está cargado.
         catalogo.agregar(juego)

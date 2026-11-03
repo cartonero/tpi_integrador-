@@ -12,12 +12,15 @@ Estructuras que usa cada opción del menú:
     3. Filtrar por categoría   -> Catalogo (recorre la lista)
     4. Ver recorridos del BST  -> BST (inorder, preorder, postorder)
     5. Explorar categorías     -> Árbol general (grupos de Steam -> géneros)
+    6. Mostrar duración        -> AVL (busca el juego) y su tiempo de juego
 
 Convención: las funciones que empiezan con guion bajo (_formatear_juego,
 _navegar_generos, ...) son auxiliares internas de este módulo; las demás
 las usa el menú principal.
 """
 import textwrap
+
+from servicios.juegos import formatear_duracion
 
 
 # ==================== MENÚ PRINCIPAL ====================
@@ -32,11 +35,23 @@ def mostrar_menu():
     print("3. Filtrar por categoría")
     print("4. Ver recorridos del BST (inorder / preorder / postorder)")
     print("5. Explorar categorías")
+    print("6. Mostrar duración estimada de un juego")
     print("0. Salir")
     print("-" * 40)
 
 
 # ==================== OPCIÓN 1: BUSCAR (AVL) ====================
+
+def _buscar_juego(avl, nombre):
+    """Busca un juego por nombre en el AVL. Devuelve el Juego o None.
+
+    El árbol compara en minúsculas, así que se le pasa el nombre en minúsculas.
+    El parámetro "clave" es la MISMA función con la que se insertaron los
+    juegos en main.py (nombre en minúsculas): el árbol la usa en cada nodo
+    para decidir si seguir por la izquierda (menor) o por la derecha (mayor).
+    """
+    return avl.buscar(nombre.lower(), clave=lambda j: j.get_nombre().lower())
+
 
 def ejecutar_buscar(avl):
     """Busca usando el ÁRBOL AVL (TP4).
@@ -47,12 +62,7 @@ def ejecutar_buscar(avl):
       - TP4: AVL, O(log n) garantizado porque se auto-balancea con rotaciones.
     """
     nombre = input("Nombre del juego: ").strip()  # strip() saca espacios de los bordes
-
-    # El árbol compara en minúsculas, así que pasamos el nombre en minúsculas.
-    # El parámetro "clave" es la MISMA función con la que se insertaron los
-    # juegos en main.py (nombre en minúsculas): el árbol la usa en cada nodo
-    # para decidir si seguir por la izquierda (menor) o por la derecha (mayor).
-    juego = avl.buscar(nombre.lower(), clave=lambda j: j.get_nombre().lower())
+    juego = _buscar_juego(avl, nombre)
 
     # buscar() devuelve el Juego encontrado o None si no existe.
     if juego is None:
@@ -308,6 +318,27 @@ def ejecutar_explorar_categorias(arbol_categorias, catalogo):
             print("Opción inválida, probá de nuevo.")
 
 
+# ==================== OPCIÓN 6: MOSTRAR DURACIÓN (F5) ====================
+
+def ejecutar_duracion(avl):
+    """Muestra la duración estimada de un juego.
+
+    La duración es el tiempo de juego PROMEDIO que registra Steam, no el
+    tiempo que lleva completarlo. Muchos juegos no tienen ese dato.
+    """
+    nombre = input("Nombre del juego: ").strip()
+    juego = _buscar_juego(avl, nombre)  # búsqueda O(log n) en el AVL
+
+    if juego is None:
+        print(f"No se encontró ningún juego llamado '{nombre}'.")
+    elif not juego.tiene_tiempo():
+        print(f"{juego.get_nombre()}: no hay datos de duración para este juego.")
+    else:
+        print(f"{juego.get_nombre()}: duración estimada "
+              f"{formatear_duracion(juego.get_tiempo_min())} "
+              "(tiempo de juego promedio en Steam)")
+
+
 # ==================== BUCLE PRINCIPAL ====================
 
 def iniciar(catalogo, bst, avl, arbol_categorias):
@@ -331,6 +362,8 @@ def iniciar(catalogo, bst, avl, arbol_categorias):
             ejecutar_recorridos(bst, avl)
         elif opcion == "5":
             ejecutar_explorar_categorias(arbol_categorias, catalogo)
+        elif opcion == "6":
+            ejecutar_duracion(avl)
         elif opcion == "0":
             print("¡Hasta luego!")
             break  # corta el while True y termina el programa

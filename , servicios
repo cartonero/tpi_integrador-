@@ -1,0 +1,31 @@
+[33m0cd3a8c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m F3: comparar tiempo de juego entre dos o mas juegos
+[33m8c17e6e[m F5: mostrar duracion estimada de un juego (tiempo de juego en Juego)
+[33m57bd0d6[m Documentacion: comentarios en los scripts de algoritmos
+[33m99f3b42[m Documentacion: comentarios en el arbol general
+[33m886561d[m Documentacion: comentarios en el BST y el AVL
+[33m1151fcb[m Documentacion: comentarios en la interfaz de terminal
+[33ma7e0161[m Documentacion: comentarios en modelos, servicios y main
+[33m02ebdde[m Entrega 4: AVL, arbol general, pruebas y analisis TP4-TP5
+[33m80ecc4b[m TP4-TP5: analisis escrito con comparacion BST vs AVL y arbol general
+[33m7922d7b[m TP4-TP5: script de pruebas del AVL y el arbol general
+[33m1f8fb75[m TP5: opcion Explorar categorias con arbol general
+[33me0c78ae[m TP5: arbol general con jerarquia de categorias de Steam
+[33m9c24aae[m TP4: comparacion BST vs AVL con datos ordenados
+[33m605530f[m TP4: arbol AVL con rotaciones
+[33m1aa27e0[m Merge branch 'main' of https://github.com/cartonero/tpi_integrador-
+[33m9f7c37d[m TP3: cierre de entrega - arbol BST integrado, pruebas, comparacion de tiempos y analisis
+[33me38f946[m Update README.md
+[33m5db97b6[m Update README.md
+[33maaae4d7[m Actualizar diagrama de clases con implementacion real TP1
+[33mf4eb573[m Update execution command in README
+[33m4a5e29b[m actualiz
+[33mf06a497[m Merge branch 'main' of https://github.com/cartonero/tpi_integrador-
+[33m50074a9[m Update README.md
+[33mf8fa3a0[m actualiza
+[33m228c7a7[m Create README.md
+[33mfcae4b6[m TP1: menu de terminal con Buscar, Listar y Filtrar
+[33m3b8ef2e[m TP1: carga de datos desde JSON de Steam
+[33me1c3b31[m Ignorar carpeta lux con dataset original
+[33m329afca[m Agregar gitignore
+[33m4c2252a[m Agregar gitignore
+[33me2e1b81[m TP1: clases Juego y Catalogo con encapsulamiento

@@ -14,6 +14,7 @@ Estructuras que usa cada opción del menú:
     5. Explorar categorías     -> Árbol general (grupos de Steam -> géneros)
     6. Mostrar duración        -> AVL (busca el juego) y su tiempo de juego
     7. Comparar tiempo de juego -> AVL (busca cada juego) y los ordena por tiempo
+    8. Añadir un juego         -> Catalogo, BST y AVL (se insertan los tres)
 
 Convención: las funciones que empiezan con guion bajo (_formatear_juego,
 _navegar_generos, ...) son auxiliares internas de este módulo; las demás
@@ -21,7 +22,14 @@ las usa el menú principal.
 """
 import textwrap
 
-from servicios.juegos import formatear_duracion, comparar_tiempos
+from servicios.categorias import generos_validos
+from servicios.juegos import (
+    formatear_duracion,
+    comparar_tiempos,
+    parsear_generos,
+    horas_a_minutos,
+    agregar_juego,
+)
 
 
 # ==================== MENÚ PRINCIPAL ====================
@@ -38,6 +46,7 @@ def mostrar_menu():
     print("5. Explorar categorías")
     print("6. Mostrar duración estimada de un juego")
     print("7. Comparar tiempo de juego de dos o más juegos")
+    print("8. Añadir un juego")
     print("0. Salir")
     print("-" * 40)
 
@@ -422,6 +431,67 @@ def ejecutar_comparar(avl):
         print(f"Sin datos de duración (no se pueden comparar): {nombres}")
 
 
+# ==================== OPCIÓN 8: AÑADIR UN JUEGO (F2) ====================
+
+def ejecutar_agregar(catalogo, bst, avl):
+    """Añade un juego nuevo al catálogo y a los dos árboles.
+
+    Los juegos añadidos viven solo en memoria: se pierden al cerrar el
+    programa (datos/games.json no se modifica).
+    """
+    print("--- AÑADIR UN JUEGO ---")
+    nombre = input("Nombre del juego (Enter vacío para cancelar): ").strip()
+    if nombre == "":
+        print("Cancelado.")
+        return
+
+    # Aviso temprano: si el nombre ya existe no hace falta pedir lo demás.
+    existente = _buscar_juego(avl, nombre)  # búsqueda O(log n) en el AVL
+    if existente is not None:
+        print(f"Ya existe un juego llamado '{existente.get_nombre()}'.")
+        return
+
+    # Géneros: solo se aceptan los de la jerarquía de categorías. Se repite
+    # hasta que todos los que escribió sean válidos.
+    validos = generos_validos()
+    print("Géneros disponibles:")
+    print(textwrap.fill(", ".join(validos), width=70,
+                        initial_indent="  ", subsequent_indent="  "))
+    while True:
+        entrada = input("Géneros (separados por coma, Enter vacío para cancelar): ")
+        if entrada.strip() == "":
+            print("Cancelado.")
+            return
+        generos, invalidos = parsear_generos(entrada, validos)
+        if invalidos:
+            print(f"  Géneros no válidos: {', '.join(invalidos)}. Probá de nuevo.")
+        elif not generos:
+            print("  Hace falta al menos un género.")  # por ejemplo si solo escribió comas
+        else:
+            break
+
+    # Duración: es opcional. Enter vacío significa "no la sé" (sin datos).
+    while True:
+        entrada = input("Duración en horas (Enter si no la sabés): ")
+        try:
+            minutos = horas_a_minutos(entrada)
+            break
+        except ValueError as error:
+            print(f"  {error}")
+
+    # La lógica de alta (catálogo + BST + AVL) está en servicios/juegos.py.
+    try:
+        juego = agregar_juego(nombre, generos, minutos, catalogo, bst, avl)
+    except ValueError as error:
+        print(error)
+        return
+
+    print(f"\nSe agregó '{juego.get_nombre()}' ({', '.join(generos)}), "
+          f"duración: {formatear_duracion(minutos)}.")
+    print(f"El catálogo tiene ahora {catalogo.cantidad()} juegos. "
+          f"Altura del AVL: {avl.altura()}.")
+
+
 # ==================== BUCLE PRINCIPAL ====================
 
 def iniciar(catalogo, bst, avl, arbol_categorias):
@@ -449,6 +519,8 @@ def iniciar(catalogo, bst, avl, arbol_categorias):
             ejecutar_duracion(avl)
         elif opcion == "7":
             ejecutar_comparar(avl)
+        elif opcion == "8":
+            ejecutar_agregar(catalogo, bst, avl)
         elif opcion == "0":
             print("¡Hasta luego!")
             break  # corta el while True y termina el programa

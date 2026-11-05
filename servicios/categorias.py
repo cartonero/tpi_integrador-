@@ -14,7 +14,8 @@ cantidad distinta de hijos: 10, 2, 10 y 4.
 
 Los nodos del árbol guardan solo NOMBRES de categorías (texto), no juegos.
 Para saber qué juegos tiene un género, el menú le pregunta al Catalogo
-(filtrar_por_categoria). Este módulo se usa en la opción "Explorar categorías".
+(filtrar_por_categoria). Este módulo se usa en la opción "Explorar categorías" y
+para validar los géneros al añadir un juego (opción 8).
 """
 from estructuras.arbol_general import ArbolGeneral
 
@@ -39,6 +40,15 @@ GRUPOS = {
         "Violent", "Gore", "Nudity", "Sexual Content",
     ],
 }
+
+
+def generos_validos():
+    """Devuelve la lista de todos los géneros de la jerarquía (los de GRUPOS), en orden.
+
+    Son los únicos géneros que se aceptan al añadir un juego nuevo.
+    """
+    # Recorre cada lista de géneros de cada grupo y las junta en una sola lista.
+    return [genero for generos in GRUPOS.values() for genero in generos]
 
 
 def construir_arbol_categorias(catalogo):

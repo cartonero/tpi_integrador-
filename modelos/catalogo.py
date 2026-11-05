@@ -9,9 +9,12 @@ Es la "fuente de datos" del programa:
   - main.py recorre sus juegos para armar los árboles (BST y AVL).
   - El menú usa listar() y filtrar_por_categoria() directamente.
 
-Las búsquedas de esta clase son SECUENCIALES (recorren la lista de a un
-elemento): cuestan O(n). Justamente por eso después se incorporaron los
-árboles, que buscan en O(log n).
+Además de la lista guarda un diccionario auxiliar (id de Steam -> juego) que
+permite agregar y buscar por id en O(1), sin recorrer la lista.
+
+La búsqueda por NOMBRE (buscar) y el filtrado son SECUENCIALES (recorren la
+lista de a un elemento): cuestan O(n). Justamente por eso después se
+incorporaron los árboles, que buscan por nombre en O(log n).
 """
 from modelos.juego import Juego
 
@@ -24,16 +27,24 @@ class Catalogo:
         # de los métodos de esta clase (encapsulamiento).
         self._juegos = []
 
+        # Índice auxiliar: diccionario "appid -> Juego". Sirve para saber si
+        # un id ya existe (y para obtener el juego) en O(1). Sin él, cada
+        # alta tendría que recorrer toda la lista y cargar muchos juegos
+        # seguidos sería cada vez más lento.
+        self._por_appid = {}
+
     def agregar(self, juego: Juego):
         """Agrega un juego al catálogo. Devuelve True si lo agregó.
 
         Si ya existe un juego con el mismo appid no lo agrega (evita
-        duplicados) y devuelve False. Costo: O(n), porque antes de agregar
-        recorre la lista para chequear el appid.
+        duplicados) y devuelve False. Costo: O(1), porque el chequeo se hace
+        en el diccionario de ids.
         """
-        if self.buscar_por_appid(juego.get_appid()) is not None:
+        appid = juego.get_appid()
+        if appid in self._por_appid:
             return False
         self._juegos.append(juego)
+        self._por_appid[appid] = juego
         return True
 
     def buscar(self, nombre):
@@ -51,11 +62,9 @@ class Catalogo:
         return None
 
     def buscar_por_appid(self, appid):
-        """Búsqueda SECUENCIAL por id de Steam. Devuelve el Juego o None. O(n)."""
-        for juego in self._juegos:
-            if juego.get_appid() == appid:
-                return juego
-        return None
+        """Busca un juego por id de Steam. Devuelve el Juego o None. O(1)."""
+        # .get() devuelve None si el id no está en el diccionario.
+        return self._por_appid.get(appid)
 
     def listar(self):
         """Devuelve una COPIA de la lista de juegos.

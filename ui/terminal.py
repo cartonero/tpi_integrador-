@@ -7,7 +7,7 @@ datos ni implementa árboles: recibe las estructuras ya construidas por
 main.py y les hace consultas.
 
 Estructuras que usa cada opción del menú:
-    1. Buscar juego            -> AVL (búsqueda por nombre, O(log n))
+    1. Buscar juego            -> AVL (búsqueda por nombre, O(log n)) y Grafo (relacionados)
     2. Listar juegos           -> Catalogo (lista completa, paginada)
     3. Filtrar por categoría   -> Catalogo (recorre la lista)
     4. Ver recorridos del BST  -> BST (inorder, preorder, postorder)
@@ -22,6 +22,7 @@ _navegar_generos, ...) son auxiliares internas de este módulo; las demás
 las usa el menú principal.
 """
 import textwrap
+import unicodedata
 
 from servicios.categorias import generos_validos
 from servicios.juegos import (
@@ -67,13 +68,99 @@ def _buscar_juego(avl, nombre):
     return avl.buscar(nombre.lower(), clave=lambda j: j.get_nombre().lower())
 
 
-def ejecutar_buscar(avl):
-    """Busca usando el ÁRBOL AVL (TP4).
+# Cuántos juegos relacionados se sugieren en la tarjeta de la búsqueda.
+CANTIDAD_SUGERIDOS = 3
+ANCHO_TARJETA_MIN = 42
+ANCHO_TARJETA_MAX = 76
+
+
+def _ancho_visual(texto):
+    """Cuántas columnas ocupa un texto en la terminal.
+
+    Los caracteres chinos, japoneses y coreanos ocupan 2 columnas; el resto, 1.
+    Se usa para que el borde derecho de la tarjeta quede alineado aunque el
+    nombre del juego tenga ese tipo de caracteres.
+    """
+    return sum(2 if unicodedata.east_asian_width(c) in ("W", "F") else 1 for c in texto)
+
+
+def _cortar_visual(texto, ancho):
+    """Corta un texto para que ocupe como máximo `ancho` columnas (agrega '…')."""
+    if _ancho_visual(texto) <= ancho:
+        return texto
+    resultado = ""
+    for caracter in texto:
+        if _ancho_visual(resultado + caracter) > ancho - 1:
+            break
+        resultado += caracter
+    return resultado + "…"
+
+
+def _texto_rating(juego):
+    """Texto del rating: '9.4 / 10 (94% positivas, 1.234 votos)' o 'sin votos'."""
+    if not juego.tiene_rating():
+        return "sin votos"
+    votos = f"{juego.get_votos():,}".replace(",", ".")
+    palabra = "voto" if juego.get_votos() == 1 else "votos"
+    texto = (f"{juego.get_rating()} / 10 "
+             f"({juego.get_porcentaje_positivo()}% positivas, {votos} {palabra})")
+    if juego.get_votos() < 10:
+        texto += " - pocos votos"
+    return texto
+
+
+def _tarjeta_juego(juego, relacionados):
+    """Arma la tarjeta de un juego como lista de líneas de texto.
+
+    `relacionados` es una lista de (juego, similitud) que viene del grafo.
+    La tarjeta tiene el nombre, la categoría, los géneros, la duración
+    estimada, el rating y los juegos que podrían interesarle al jugador.
+    """
+    lineas = [
+        juego.get_nombre().upper(),
+        f"Categoría: {juego.get_categoria_principal()}",
+        f"Géneros: {', '.join(juego.get_generos())}",
+        f"Duración estimada: {formatear_duracion(juego.get_tiempo_min())}",
+        f"Rating: {_texto_rating(juego)}",
+        "",
+    ]
+    if relacionados:
+        lineas.append("Si te gustó, quizás te interesen:")
+        for posicion, (otro, parecido) in enumerate(relacionados, 1):
+            nombre = _cortar_visual(otro.get_nombre(), 30)
+            rating = f"{otro.get_rating()}/10" if otro.tiene_rating() else "s/votos"
+            lineas.append(f" {posicion}. {nombre}  [{rating}]  {parecido:.0%} parecido")
+    else:
+        lineas.append("No hay juegos relacionados para sugerir.")
+
+    ancho = max(ANCHO_TARJETA_MIN, *(_ancho_visual(l) for l in lineas))
+    ancho = min(ancho, ANCHO_TARJETA_MAX)
+
+    def fila(texto):
+        texto = _cortar_visual(texto, ancho)
+        relleno = " " * (ancho - _ancho_visual(texto))
+        return f"║ {texto}{relleno} ║"
+
+    borde = "═" * (ancho + 2)
+    salida = [f"╔{borde}╗", fila("JUEGOTECA"), f"╠{borde}╣"]
+    salida += [fila(l) for l in lineas]
+    salida.append(f"╚{borde}╝")
+    return salida
+
+
+def ejecutar_buscar(avl, grafo):
+    """Busca un juego por nombre y muestra su tarjeta con juegos relacionados.
+
+    Usa dos estructuras:
+      - el ÁRBOL AVL (TP4) para encontrar el juego: O(log n) garantizado,
+        porque se auto-balancea con rotaciones;
+      - el GRAFO (TP7) para sugerir juegos parecidos.
 
     Evolución de esta opción:
       - TP1: recorría toda la lista del catálogo: O(n).
       - TP3: BST, O(log n) en promedio pero O(n) si se desbalancea.
-      - TP4: AVL, O(log n) garantizado porque se auto-balancea con rotaciones.
+      - TP4: AVL, O(log n) garantizado.
+      - TP7: además muestra los juegos relacionados.
     """
     nombre = input("Nombre del juego: ").strip()  # strip() saca espacios de los bordes
     juego = _buscar_juego(avl, nombre)
@@ -81,8 +168,12 @@ def ejecutar_buscar(avl):
     # buscar() devuelve el Juego encontrado o None si no existe.
     if juego is None:
         print(f"No se encontró ningún juego llamado '{nombre}'.")
-    else:
-        print(juego)
+        return
+
+    relacionados = juegos_relacionados(grafo, juego, maximo=CANTIDAD_SUGERIDOS)
+    print()
+    for linea in _tarjeta_juego(juego, relacionados):
+        print(linea)
 
 
 # ==================== OPCIÓN 2: LISTAR (CON PAGINADO) ====================
@@ -545,7 +636,7 @@ def iniciar(catalogo, bst, avl, arbol_categorias, grafo):
 
         # Despachamos según la opción elegida.
         if opcion == "1":
-            ejecutar_buscar(avl)
+            ejecutar_buscar(avl, grafo)
         elif opcion == "2":
             ejecutar_listar(catalogo)
         elif opcion == "3":

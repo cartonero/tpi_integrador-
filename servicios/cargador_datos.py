@@ -47,6 +47,8 @@ def cargar_catalogo(ruta_json=RUTA_JSON_POR_DEFECTO):
             datos.get("name"),
             datos.get("genres", []),
             datos.get("average_playtime_forever", 0),
+            datos.get("positive", 0),
+            datos.get("negative", 0),
         )
         # agregar() descarta los juegos cuyo appid ya está cargado.
         catalogo.agregar(juego)

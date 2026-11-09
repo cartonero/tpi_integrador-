@@ -14,7 +14,8 @@ Estructuras que usa cada opción del menú:
     5. Explorar categorías     -> Árbol general (grupos de Steam -> géneros)
     6. Mostrar duración        -> AVL (busca el juego) y su tiempo de juego
     7. Comparar tiempo de juego -> AVL (busca cada juego) y los ordena por tiempo
-    8. Añadir un juego         -> Catalogo, BST y AVL (se insertan los tres)
+    8. Añadir un juego         -> Catalogo, BST y AVL (se insertan los tres) y Grafo
+    9. Ver juegos relacionados -> AVL (busca el juego) y Grafo (sus vecinos más parecidos)
 
 Convención: las funciones que empiezan con guion bajo (_formatear_juego,
 _navegar_generos, ...) son auxiliares internas de este módulo; las demás
@@ -30,6 +31,7 @@ from servicios.juegos import (
     horas_a_minutos,
     agregar_juego,
 )
+from servicios.relaciones import incorporar_juego, juegos_relacionados
 
 
 # ==================== MENÚ PRINCIPAL ====================
@@ -47,6 +49,7 @@ def mostrar_menu():
     print("6. Mostrar duración estimada de un juego")
     print("7. Comparar tiempo de juego de dos o más juegos")
     print("8. Añadir un juego")
+    print("9. Ver juegos relacionados")
     print("0. Salir")
     print("-" * 40)
 
@@ -433,8 +436,8 @@ def ejecutar_comparar(avl):
 
 # ==================== OPCIÓN 8: AÑADIR UN JUEGO (F2) ====================
 
-def ejecutar_agregar(catalogo, bst, avl):
-    """Añade un juego nuevo al catálogo y a los dos árboles.
+def ejecutar_agregar(catalogo, bst, avl, grafo):
+    """Añade un juego nuevo al catálogo, a los dos árboles y al grafo de relacionados.
 
     Los juegos añadidos viven solo en memoria: se pierden al cerrar el
     programa (datos/games.json no se modifica).
@@ -486,15 +489,51 @@ def ejecutar_agregar(catalogo, bst, avl):
         print(error)
         return
 
+    # El juego nuevo también entra al grafo, unido a sus juegos más parecidos.
+    aristas = incorporar_juego(grafo, catalogo, juego)
+
     print(f"\nSe agregó '{juego.get_nombre()}' ({', '.join(generos)}), "
           f"duración: {formatear_duracion(minutos)}.")
+    print(f"Quedó relacionado con {aristas} juego(s) parecido(s).")
     print(f"El catálogo tiene ahora {catalogo.cantidad()} juegos. "
           f"Altura del AVL: {avl.altura()}.")
 
 
+# ==================== OPCIÓN 9: JUEGOS RELACIONADOS (GRAFO, TP7) ====================
+
+def ejecutar_relacionados(avl, grafo):
+    """Muestra los juegos más parecidos a uno dado, usando el grafo.
+
+    Dos juegos están relacionados si comparten géneros (más peso a los géneros
+    raros). El AVL encuentra el juego por nombre y el grafo devuelve sus
+    vecinos, del más parecido al menos parecido.
+    """
+    nombre = input("Nombre del juego: ").strip()
+    juego = _buscar_juego(avl, nombre)  # búsqueda O(log n) en el AVL
+
+    if juego is None:
+        print(f"No se encontró ningún juego llamado '{nombre}'.")
+        return
+
+    relacionados = juegos_relacionados(grafo, juego, maximo=10)
+    print(f"\n{juego.get_nombre()} — géneros: {', '.join(juego.get_generos())}")
+    if not relacionados:
+        print("No tiene juegos relacionados.")
+        return
+
+    total = grafo.grado(juego)
+    if total > len(relacionados):
+        print(f"Juegos relacionados (los {len(relacionados)} más parecidos, de {total}):")
+    else:
+        print(f"Juegos relacionados ({total}):")
+    for posicion, (vecino, parecido) in enumerate(relacionados, 1):
+        print(f"{posicion:>3}. {_recortar(vecino.get_nombre(), 40):<40} "
+              f"{parecido:>4.0%}  {', '.join(vecino.get_generos())}")
+
+
 # ==================== BUCLE PRINCIPAL ====================
 
-def iniciar(catalogo, bst, avl, arbol_categorias):
+def iniciar(catalogo, bst, avl, arbol_categorias, grafo):
     """Bucle principal del programa: muestra el menú y ejecuta la opción elegida.
 
     Recibe las estructuras ya construidas (las arma main.py) y se las pasa a
@@ -520,7 +559,9 @@ def iniciar(catalogo, bst, avl, arbol_categorias):
         elif opcion == "7":
             ejecutar_comparar(avl)
         elif opcion == "8":
-            ejecutar_agregar(catalogo, bst, avl)
+            ejecutar_agregar(catalogo, bst, avl, grafo)
+        elif opcion == "9":
+            ejecutar_relacionados(avl, grafo)
         elif opcion == "0":
             print("¡Hasta luego!")
             break  # corta el while True y termina el programa

@@ -1,68 +1,71 @@
-# Juegoteca — Propuesta (TP0)
+# Requerimientos — Juegoteca
 
-Sistema de recomendación de videojuegos que ayuda a un jugador a decidir qué
-jugar a continuación, teniendo en cuenta el tiempo estimado que le llevará
-completarlo.
+## Alcance
 
-## 1. Nombre del proyecto y dominio elegido (con justificación)
+Juegoteca es un sistema de consola que permite buscar videojuegos de Steam por nombre, navegar por
+categorías, consultar cuánto se suele jugar cada título y comparar tiempos entre juegos. Está pensado
+para videojugadores que quieren decidir a qué jugar sabiendo cuánto tiempo les va a llevar.
 
-**Nombre:** Juegoteca
+## Requerimientos funcionales (RF)
 
-**Dominio:** Videojuegos.
+| ID | Requerimiento | Estado |
+|---|---|---|
+| RF01 | El sistema debe permitir buscar un juego por nombre, sin distinguir mayúsculas | ✅ TP1, TP4 |
+| RF02 | El sistema debe permitir listar los juegos del catálogo, paginados | ✅ TP1 |
+| RF03 | El sistema debe permitir filtrar los juegos por categoría | ✅ TP1 |
+| RF04 | El sistema debe mostrar los juegos en orden alfabético y en los otros recorridos del árbol | ✅ TP3 |
+| RF05 | El sistema debe permitir explorar las categorías como una jerarquía de grupos y géneros | ✅ TP5 |
+| RF06 | El sistema debe mostrar la duración estimada de un juego | ✅ |
+| RF07 | El sistema debe permitir comparar el tiempo de juego de dos o más juegos | ✅ |
+| RF08 | El sistema debe permitir añadir un juego nuevo al catálogo durante la sesión | ✅ |
+| RF09 | El sistema debe mostrar los N juegos con más tiempo de juego | ⏳ TP6 |
+| RF10 | El sistema debe mostrar los juegos relacionados con uno dado | ⏳ TP7 |
+| RF11 | El sistema debe encontrar el camino de menor costo entre dos juegos | ⏳ TP9 |
+| RF12 | El sistema debe sugerir juegos a partir de uno dado | ⏳ TP10 |
 
-**Justificación:** Decidimos centrarnos en el universo de los videojuegos
-porque Steam tiene a libre disposición una base de datos acerca de los
-productos (videojuegos) de la plataforma, lo que nos da datos reales y
-suficientes para toda la cursada. El dominio permite ordenar por nombre o
-rating (BST/AVL), agrupar por categoría/género (árbol general), rankear por
-tiempo de juego o rating (heap) y relacionar juegos entre sí (grafo).
+### Criterios de aceptación
 
-## 2. Problema que resuelve y usuario objetivo
+> **RF01 — Buscar por nombre**
+> - "Crab Game", "crab game" y "CRAB GAME" devuelven el mismo juego.
+> - Si el juego no existe, el sistema lo informa y vuelve al menú.
+> - Responde en menos de 1 segundo con 10.000 juegos.
 
-**Problema:** Un jugador tiene a disposición una enorme cantidad de
-videojuegos y no sabe cuál elegir, ni cuánto tiempo real le va a insumir
-completarlo.
+> **RF07 — Comparar tiempos**
+> - Se ingresan los nombres uno por línea; una línea vacía termina la lista.
+> - Se necesitan al menos 2 juegos encontrados.
+> - Los juegos sin dato de tiempo se informan aparte y no entran en la comparación.
 
-**Usuario objetivo:** Videojugadores/gamers que buscan recomendaciones de
-videojuegos, teniendo a su disposición los tiempos estimados en completarlos
-para tener una mejor noción del contenido y el tiempo que invertirán.
+> **RF08 — Añadir un juego**
+> - El nombre no puede estar vacío ni repetirse.
+> - Los géneros deben pertenecer a la jerarquía de categorías.
+> - El juego nuevo se puede buscar de inmediato, sin reiniciar el programa.
 
-## 3. Funcionalidades iniciales
+## Requerimientos no funcionales (RNF)
 
-| ID | Funcionalidad |
-|---|---|
-| F1 | Buscar juego (por nombre) |
-| F2 | Añadir juegos (al catálogo) |
-| F3 | Comparar tiempo de juego (entre dos o más juegos) |
-| F4 | Explorar categorías (géneros, jerarquía) |
-| F5 | Mostrar duración del juego (estimada) |
+| ID | Requerimiento | Verificación |
+|---|---|---|
+| RNF01 | La búsqueda por nombre debe ser logarítmica sobre el total de juegos | AVL, TP4. Ver `docs/08-analisis-tp4-tp5.md` |
+| RNF02 | El sistema debe soportar al menos 10.000 juegos sin degradar la respuesta | TP2 y TP4: con 10.000 nombres el AVL tiene altura 14 y busca en 0.0018 ms |
+| RNF03 | La interfaz debe ser usable por alguien que no conoce la implementación | Menú numerado y mensajes de error que explican qué corregir |
+| RNF04 | El proyecto debe ejecutarse con Python 3.10 o superior, sin instalar librerías | README |
+| RNF05 | Los datos de un juego deben estar encapsulados y accederse solo por getters | `modelos/juego.py` |
 
-## 4. Boceto de la interfaz de terminal
+## Fuera de alcance
 
-\`\`\`text
-========================================
- JUEGOTECA — TERMINAL
-========================================
-1. Buscar juego
-2. Añadir juegos
-3. Comparar tiempo de juego
-4. Explorar categorías
-5. Mostrar duración del juego (estimada)
-0. Salir
-----------------------------------------
-Opción: 1
-Nombre del juego: Hollow Knight
+- Autenticación o perfiles de usuario.
+- Persistencia de preferencias personales.
+- Persistencia de los juegos añadidos: viven solo en memoria durante la sesión.
+- Interfaz gráfica: todo es consola.
 
-╔══════════════════════════════════════╗
-║ 🎮 JUEGOTECA                          ║
-╠══════════════════════════════════════╣
-║ HOLLOW KNIGHT                         ║
-║ Categoría: Metroidvania               ║
-║ Duración estimada: 27 hs              ║
-║ Rating: ⭐ 9.0                         ║
-║                                        ║
-║ Si te gustó, quizás te interesen:     ║
-║  1. Ori and the Blind Forest ⭐ 8.8    ║
-║  2. Dead Cells ⭐ 8.6                  ║
-╚══════════════════════════════════════╝
-\`\`\`
+## Observaciones
+
+- **Dos árboles de búsqueda a propósito.** Se conserva el BST del TP3 (opción 4) y se usa el AVL para
+  buscar (opción 1). Así se puede mostrar en la defensa la diferencia entre un árbol que se degenera y
+  uno que se balancea.
+- **"Duración estimada" no es el tiempo para terminar el juego.** Es el tiempo de juego promedio de los
+  jugadores en Steam (`average_playtime_forever`). Solo 555 de los 2000 juegos de la muestra tienen
+  ese dato, y el sistema avisa que no hay datos de duración en los demás.
+- **Muestra de 2000 juegos.** El dataset completo pesa cerca de 900 MB, así que se versiona una muestra
+  (`datos/games.json`). Nombres repetidos dentro de la muestra se ignoran en el AVL.
+- **Trazabilidad con el TP0.** Las cinco funcionalidades iniciales corresponden a: F1 → RF01,
+  F2 → RF08, F3 → RF07, F4 → RF05, F5 → RF06.

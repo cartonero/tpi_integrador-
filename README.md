@@ -32,6 +32,12 @@ py -m algoritmos.probar_avl
 py -m algoritmos.comparar_bst_avl
 ```
 
+Las pruebas automáticas se corren, también desde la carpeta raíz, con:
+
+```bash
+py -m unittest discover tests
+```
+
 ## Qué se puede hacer (menú)
 
 | Opción | Qué hace | Estructura que usa |
@@ -57,6 +63,7 @@ necesario para terminar el juego. En la muestra, solo 555 de 2000 juegos tienen 
 | `servicios/` | Carga de datos, jerarquía de categorías y reglas para añadir y comparar juegos |
 | `ui/` | Menú y pantallas de la terminal |
 | `algoritmos/` | Scripts para preparar datos, probar las estructuras y medir tiempos |
+| `tests/` | Pruebas automáticas (`unittest`) de modelos, árboles y servicios |
 | `datos/` | `games.json`: muestra de 2000 juegos del dataset |
 | `docs/` | Documentación del proyecto |
 
@@ -72,7 +79,7 @@ Conviene leerla en este orden:
 4. [Diagrama de clases](docs/03-diagrama-clases.md): qué clases hay y cómo se relacionan.
 5. [Conexión entre estructuras](docs/04-diagrama-datos.md): cómo viajan los datos por el sistema.
 6. [Gestión del proyecto](docs/05-gestion-proyecto.md): tablero, sprints y retrospectivas.
-7. [Análisis TP3: BST](docs/07-analisis-tp3.md) y [Análisis TP4 y TP5: AVL y árbol general](docs/08-analisis-tp4-tp5.md).
+7. Análisis de cada etapa: [TP2](docs/06-analisis-tp2.md), [TP3: BST](docs/07-analisis-tp3.md) y [TP4 y TP5: AVL y árbol general](docs/08-analisis-tp4-tp5.md).
 
 ## Estado del proyecto
 

@@ -1,6 +1,5 @@
 # Gestión de proyecto — Juegoteca
 
-- **Tablero**: <COMPLETAR: link a Trello o GitHub Projects>
 - **Metodología**: Scrum simplificado, un sprint por TP, con las columnas `Backlog · En progreso · En revisión · Hecho`.
 - **Integrantes**: Rodrigo Cruz Choque, Ian Martinez, Milagros Ponce.
 

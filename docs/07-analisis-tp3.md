@@ -65,21 +65,23 @@ Buscar 'juego que no existe zzz': None
 
 ## 4. Comparación de tiempos
 
-Los tiempos son **reales**, sacados con `algoritmos/medir_tiempos.py`.
-Cada valor es el promedio de 300 búsquedas repetidas, midiendo solo la
-búsqueda (la construcción de la estructura no se cronometra).
+Los tiempos son **reales**, sacados con `algoritmos/medir_tiempos.py`
+(`py -m algoritmos.medir_tiempos`). Cada valor es el promedio de 300
+búsquedas repetidas, midiendo solo la búsqueda: ordenar la lista para la
+binaria y construir el árbol se hacen una vez y no se cronometran.
 
-Usamos hasta **80.000** elementos en vez de 100.000: el dataset
-completo de Steam (`lux/games.json`, 125.855 juegos) tiene esa
-cantidad de juegos con nombre válido cargado, así que es el máximo
-real disponible sin inventar datos de más.
+Los nombres salen del dataset completo de Steam (`lux/games.json`), en el orden
+en que vienen en el archivo. En cada tamaño se busca un elemento que sí existe.
 
 | N elementos | Secuencial (ms) | Binaria (ms) | Árbol BST (ms) |
 |---|---:|---:|---:|
-| 100 | 0.0010 | 0.0008 | 0.0014 |
-| 1.000 | 0.0091 | 0.0015 | 0.0019 |
-| 10.000 | 0.1062 | 0.0018 | 0.0020 |
-| 80.000 | 3.5766 | 0.0018 | 0.0022 |
+| 100 | 0.0010 | 0.0008 | 0.0012 |
+| 1.000 | 0.0089 | 0.0014 | 0.0018 |
+| 10.000 | 0.1011 | 0.0018 | 0.0020 |
+| 100.000 | 5.3894 | 0.0023 | 0.0029 |
+
+Con 100 elementos la secuencial es incluso la más rápida: el costo de bajar
+por el árbol o dividir la lista no se paga con tan pocos datos.
 
 ## 5. Análisis de complejidad
 
@@ -95,10 +97,10 @@ real disponible sin inventar datos de más.
 
 ## 6. Conclusión
 
-Con 80.000 elementos, la búsqueda secuencial tarda **3.5766 ms** contra
-**0.0018 ms** de la binaria y **0.0022 ms** del árbol: casi **1.630
-veces más rápido** el árbol que la secuencial. La diferencia crece con
-N porque la secuencial es lineal y el árbol/binaria son logarítmicos.
+Con 100.000 elementos, la búsqueda secuencial tarda **5.3894 ms** contra
+**0.0023 ms** de la binaria y **0.0029 ms** del árbol: el árbol es unas
+**1.860 veces más rápido** que la secuencial. La diferencia crece con N
+porque la secuencial es lineal y el árbol y la binaria son logarítmicos.
 
 Elegimos quedarnos con el **árbol BST** en la app (y no con la
 binaria) porque, además de buscar rápido, el árbol permite **insertar

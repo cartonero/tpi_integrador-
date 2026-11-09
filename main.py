@@ -71,8 +71,8 @@ arbol_categorias = construir_arbol_categorias(catalogo)  # árbol general (TP5)
 #    cuanto más baja, más rápido se busca. Con los mismos datos el AVL queda
 #    más bajo que el BST.
 print(f"Catálogo cargado: {catalogo.cantidad()} juegos "
-      f"· altura BST: {bst.altura()} · altura AVL: {avl.altura()} "
-      f"· árbol de categorías: {arbol_categorias.cantidad_nodos()} nodos")
+        f"· altura BST: {bst.altura()} · altura AVL: {avl.altura()} "
+        f"· árbol de categorías: {arbol_categorias.cantidad_nodos()} nodos")
 
 # 5) Abre el menú interactivo. Recibe las estructuras ya construidas.
 iniciar(catalogo, bst, avl, arbol_categorias)

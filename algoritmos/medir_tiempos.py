@@ -25,7 +25,7 @@ from estructuras.arbol_binario import ArbolBST
 
 
 RUTA_DATASET_COMPLETO = "lux/games.json"
-TAMANOS = [100, 1_000, 10_000, 80_000]  # cantidades de elementos a probar
+TAMANOS = [100, 1_000, 10_000, 100_000]  # cantidades de elementos a probar
 REPETICIONES = 300  # búsquedas promediadas para un tiempo estable
 
 

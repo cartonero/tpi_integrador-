@@ -45,8 +45,8 @@ class ArbolGeneral:
 
     Se usa para representar jerarquías naturales del dominio, como:
     Películas → Ciencia Ficción → Cyberpunk, Viajes Temporales, IA
-             → Acción
-             → Comedia
+                → Acción
+                → Comedia
     """
 
     def __init__(self):

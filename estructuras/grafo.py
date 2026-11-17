@@ -5,15 +5,15 @@ Un GRAFO es un conjunto de VÉRTICES (nodos) unidos por ARISTAS. En Juegoteca:
     - cada vértice es un juego;
     - cada arista une dos juegos "relacionados" (ver servicios/relaciones.py);
     - el PESO de la arista es la DISTANCIA entre los dos juegos: 0 si son
-      idénticos y 1 si no tienen nada en común. Cuanto menor el peso, más
-      parecidos son. Un peso nunca negativo permite usar Dijkstra más adelante.
+        idénticos y 1 si no tienen nada en común. Cuanto menor el peso, más
+        parecidos son. Un peso nunca negativo permite usar Dijkstra más adelante.
 
 Decisiones de diseño (se explican en docs/09-analisis-tp7.md):
     - NO DIRIGIDO: si A está relacionado con B, B lo está con A (relación simétrica).
     - PESADO: no alcanza con saber que dos juegos se relacionan; importa cuánto.
     - LISTA DE ADYACENCIA: cada vértice guarda solo sus vecinos. El grafo es
-      RALO (cada juego tiene unos 10 vecinos entre 2000), y una matriz de
-      2000 x 2000 desperdiciaría memoria en casillas vacías.
+        RALO (cada juego tiene unos 10 vecinos entre 2000), y una matriz de
+        2000 x 2000 desperdiciaría memoria en casillas vacías.
 
 Se implementa con un diccionario de diccionarios:
     {vertice: {vecino: peso, vecino2: peso2, ...}, ...}

@@ -3,7 +3,7 @@
 Este diagrama muestra cómo viajan los datos: desde el archivo hasta lo que ve el jugador, pasando por
 cada estructura. Es el diagrama que usamos como guion en la defensa.
 
-```mermaid
+
 graph LR
     subgraph Datos
         RAW[("datos/games.json<br/>2000 juegos")] --> CARG["cargador_datos.py"]
@@ -32,7 +32,7 @@ graph LR
     EXP --> UI
     LIS --> UI
     UI --> AGR
-```
+
 
 ## Qué estructura resuelve cada problema
 

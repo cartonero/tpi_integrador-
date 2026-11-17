@@ -70,8 +70,9 @@ class ArbolGeneral:
         Se devuelve el nodo nuevo para poder colgarle hijos a él después
         (así se construyen los niveles de arriba hacia abajo).
         """
-        # Protección: no se puede agregar un hijo si el árbol no tiene raíz.
-        if nodo_padre is None and self.raiz is None:
+        # Protección: hace falta un nodo padre (si el árbol está vacío,
+        # primero hay que crear la raíz con insertar_raiz).
+        if nodo_padre is None:
             raise ValueError("El árbol no tiene raíz. Use insertar_raiz primero.")
 
         nuevo_nodo = NodoGeneral(dato)
@@ -199,6 +200,7 @@ class ArbolGeneral:
         return 1 + sum(self.cantidad_nodos(hijo) for hijo in nodo.hijos)
 
     def es_vacio(self):
+        """Indica si el árbol no tiene ningún nodo."""
         return self.raiz is None
 
     # ==================== UTILIDADES ====================
@@ -238,14 +240,15 @@ class ArbolGeneral:
 # Este bloque solo corre al ejecutar el archivo directamente
 # (py -m estructuras.arbol_general); NO se ejecuta cuando otro módulo lo importa.
 
-if __name__ == "__main__":
+def ejemplo_de_uso():
+    """Arma un árbol de películas y muestra sus recorridos."""
     # Crear un árbol de categorías de películas
     arbol = ArbolGeneral()
-    arbol.insertar_raiz("Películas")
+    raiz = arbol.insertar_raiz("Películas")
 
-    ciencia = arbol.agregar_hijo(arbol.raiz, "Ciencia Ficción")
-    accion = arbol.agregar_hijo(arbol.raiz, "Acción")
-    comedia = arbol.agregar_hijo(arbol.raiz, "Comedia")
+    ciencia = arbol.agregar_hijo(raiz, "Ciencia Ficción")
+    accion = arbol.agregar_hijo(raiz, "Acción")
+    comedia = arbol.agregar_hijo(raiz, "Comedia")
 
     arbol.agregar_hijo(ciencia, "Cyberpunk")
     arbol.agregar_hijo(ciencia, "Viajes temporales")
@@ -258,7 +261,7 @@ if __name__ == "__main__":
     arbol.agregar_hijo(comedia, "Comedia negra")
 
     print("=== Árbol General de Categorías ===")
-    print("Raíz:", arbol.raiz.dato)
+    print("Raíz:", raiz.dato)
     print("Altura:", arbol.altura())
     print("Cantidad de nodos:", arbol.cantidad_nodos())
     print()
@@ -289,3 +292,7 @@ if __name__ == "__main__":
     print("--- Buscar 'Cyberpunk' ---")
     resultado = arbol.buscar("Cyberpunk")
     print("Encontrado:", resultado)
+
+
+if __name__ == "__main__":
+    ejemplo_de_uso()

@@ -289,6 +289,7 @@ class AVL:
         return self._altura(self.raiz)
 
     def esta_vacio(self):
+        """Indica si el árbol no tiene ningún nodo."""
         return self.raiz is None
 
     def __len__(self):
@@ -356,7 +357,8 @@ def comparar_bst_vs_avl(lista_datos, clave):
 # Este bloque solo corre al ejecutar el archivo directamente
 # (py -m estructuras.avl); NO se ejecuta cuando otro módulo lo importa.
 
-if __name__ == "__main__":
+def ejemplo_de_uso():
+    """Inserta datos ordenados y compara la altura del BST con la del AVL."""
     class Elemento:
         def __init__(self, nombre, valor):
             self.nombre = nombre
@@ -411,3 +413,7 @@ if __name__ == "__main__":
         print(f"  Altura BST: {resultado['altura_bst']}")
         print(f"  Altura AVL: {resultado['altura_avl']}")
         print(f"  BST es más alto que AVL: {resultado['mejor_balance']}")
+
+
+if __name__ == "__main__":
+    ejemplo_de_uso()

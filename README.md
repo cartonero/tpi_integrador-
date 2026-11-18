@@ -50,6 +50,7 @@ py -m unittest discover tests
 | 7 | Comparar el tiempo de juego de dos o más juegos | AVL |
 | 8 | Añadir un juego nuevo (solo en memoria, durante la sesión) | Catálogo, BST, AVL y grafo |
 | 9 | Ver los juegos relacionados con uno dado | AVL y grafo |
+| 10 | Explorar la red: saltos entre dos juegos y grupo conectado | AVL, grafo, BFS y DFS |
 
 La **duración estimada** es el tiempo de juego promedio de los jugadores en Steam. No es el tiempo
 necesario para terminar el juego. En la muestra, solo 555 de 2000 juegos tienen ese dato.
@@ -62,8 +63,8 @@ necesario para terminar el juego. En la muestra, solo 555 de 2000 juegos tienen 
 | `estructuras/` | `ArbolBST`, `AVL`, `ArbolGeneral` y `Grafo` |
 | `servicios/` | Carga de datos, jerarquía de categorías, juegos relacionados y reglas para añadir y comparar |
 | `ui/` | Menú y pantallas de la terminal |
-| `algoritmos/` | Scripts para preparar datos, probar las estructuras y medir tiempos |
-| `tests/` | Pruebas automáticas (`unittest`) de modelos, árboles y servicios |
+| `algoritmos/` | Recorridos del grafo (`bfs.py`, `dfs.py`) y scripts para preparar datos, probar las estructuras y medir tiempos |
+| `tests/` | Pruebas automáticas (`unittest`) de modelos, árboles, grafo, recorridos y servicios |
 | `datos/` | `games.json`: muestra de 2000 juegos del dataset |
 | `docs/` | Documentación del proyecto |
 
@@ -79,7 +80,7 @@ Conviene leerla en este orden:
 4. [Diagrama de clases](docs/03-diagrama-clases.md): qué clases hay y cómo se relacionan.
 5. [Conexión entre estructuras](docs/04-diagrama-datos.md): cómo viajan los datos por el sistema.
 6. [Gestión del proyecto](docs/05-gestion-proyecto.md): tablero, sprints y retrospectivas.
-7. Análisis de cada etapa: [TP2](docs/06-analisis-tp2.md), [TP3: BST](docs/07-analisis-tp3.md) y [TP4 y TP5: AVL y árbol general](docs/08-analisis-tp4-tp5.md) y [TP7: grafo](docs/09-analisis-tp7.md).
+7. Análisis de cada etapa: [TP2](docs/06-analisis-tp2.md), [TP3: BST](docs/07-analisis-tp3.md) y [TP4 y TP5: AVL y árbol general](docs/08-analisis-tp4-tp5.md) [TP7: grafo](docs/09-analisis-tp7.md) y [TP8: BFS y DFS](docs/10-analisis-tp8.md).
 
 ## Estado del proyecto
 

@@ -39,6 +39,7 @@ para tener una mejor noción del contenido y el tiempo que invertirán.
 
 ## 4. Boceto de la interfaz de terminal
 
+```text
 ========================================
  JUEGOTECA — TERMINAL
 ========================================

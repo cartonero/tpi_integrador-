@@ -16,11 +16,11 @@ graph TD
     U -->|"6"| CU6["Ver duración estimada"]
     U -->|"7"| CU7["Comparar tiempos"]
     U -->|"8"| CU8["Añadir juego"]
-    CU9["Ver Top N: TP6"]
-    CU10["Ver relacionados: TP7"]
+    U -->|"9"| CU9["Ver juegos relacionados"]
+    U -->|"10"| CU13["Explorar la red"]
+    CU10["Ver Top N: TP6"]
     CU11["Encontrar camino: TP9"]
     CU12["Pedir recomendación: TP10"]
-    U -.-> CU9
     U -.-> CU10
     U -.-> CU11
     U -.-> CU12
@@ -36,9 +36,10 @@ Las líneas punteadas son casos de uso planificados que todavía no existen.
   1. El jugador elige la opción 1.
   2. El sistema pide el nombre.
   3. El jugador lo escribe.
-  4. El sistema lo busca sin distinguir mayúsculas y muestra el juego con su categoría.
+  4. El sistema lo busca sin distinguir mayúsculas y muestra su tarjeta: nombre, categoría, géneros,
+     duración estimada, rating y hasta 3 juegos parecidos.
 - **Flujo alternativo**: si no existe, el sistema informa que no encontró ningún juego con ese nombre.
-- **Postcondición**: el jugador vio el juego buscado, o supo que no está.
+- **Postcondición**: el jugador vio el juego buscado con sugerencias, o supo que no está.
 
 ## CU2 — Listar catálogo
 
@@ -108,3 +109,30 @@ Las líneas punteadas son casos de uso planificados que todavía no existen.
 - **Flujo alternativo**: si el nombre está vacío o repetido, o algún género no existe, el sistema explica
   el error y no agrega nada. Con Enter vacío en el nombre o en los géneros se cancela.
 - **Postcondición**: el juego se puede buscar de inmediato. Se pierde al cerrar el programa.
+
+## CU9 — Ver juegos relacionados
+
+- **Actor**: jugador.
+- **Precondición**: el catálogo está cargado y el grafo de relacionados está construido.
+- **Flujo principal**:
+  1. El jugador elige la opción 9 y escribe el nombre de un juego.
+  2. El sistema lo busca y consulta sus vecinos en el grafo.
+  3. Muestra hasta 10 juegos, del más parecido al menos parecido, con el porcentaje de parecido y sus géneros.
+- **Flujo alternativo**: si el juego no existe, lo informa. Si no tiene vecinos, avisa que no tiene relacionados.
+- **Postcondición**: el jugador conoce juegos parecidos al que le interesa.
+
+## CU13 — Explorar la red de juegos
+
+- **Actor**: jugador.
+- **Precondición**: el catálogo y el grafo están cargados.
+- **Flujo principal**:
+  1. El jugador ingresa el nombre del juego de partida (opción 10).
+  2. El sistema lo busca en el AVL y abre un submenú.
+  3. Con la opción 1, el sistema muestra los juegos a 1 y 2 saltos (BFS).
+  4. Con la opción 2, el jugador ingresa otro juego y el sistema informa a cuántos saltos están (BFS).
+  5. Con la opción 3, el sistema muestra la cantidad de juegos conectados y los primeros, en el orden de
+     un recorrido en profundidad (DFS).
+- **Flujo alternativo**: si algún juego no existe, el sistema lo informa. Si no hay camino entre los dos,
+  el sistema avisa que están en grupos separados.
+- **Postcondición**: el jugador sabe qué tan cerca están dos juegos y qué grupo de juegos los rodea.
+

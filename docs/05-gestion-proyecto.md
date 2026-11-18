@@ -1,7 +1,8 @@
 # Gestión de proyecto — Juegoteca
 
+- **Tablero**: Trello. Se presenta de forma presencial en la defensa.
 - **Metodología**: Scrum simplificado, un sprint por TP, con las columnas `Backlog · En progreso · En revisión · Hecho`.
-- **Integrantes**: Rodrigo Cruz Choque, Ian Martinez, Milagros Ponce.
+- **Integrantes**: Rodrigo Cruz Choque, Ian Martinez, Milagros Ponce. Ian y Milagros dejaron el proyecto; Rodrigo lo continúa y lo presenta solo.
 
 ## Sprint TP0 (Lanzamiento)
 

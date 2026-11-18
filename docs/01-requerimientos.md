@@ -10,7 +10,7 @@ para videojugadores que quieren decidir a qué jugar sabiendo cuánto tiempo les
 
 | ID | Requerimiento | Estado |
 |---|---|---|
-| RF01 | El sistema debe permitir buscar un juego por nombre, sin distinguir mayúsculas | ✅ TP1, TP4 |
+| RF01 | El sistema debe permitir buscar un juego por nombre, sin distinguir mayúsculas, y mostrar su tarjeta con categoría, duración, rating y juegos parecidos | ✅ TP1, TP4, TP7 |
 | RF02 | El sistema debe permitir listar los juegos del catálogo, paginados | ✅ TP1 |
 | RF03 | El sistema debe permitir filtrar los juegos por categoría | ✅ TP1 |
 | RF04 | El sistema debe mostrar los juegos en orden alfabético y en los otros recorridos del árbol | ✅ TP3 |
@@ -19,9 +19,10 @@ para videojugadores que quieren decidir a qué jugar sabiendo cuánto tiempo les
 | RF07 | El sistema debe permitir comparar el tiempo de juego de dos o más juegos | ✅ |
 | RF08 | El sistema debe permitir añadir un juego nuevo al catálogo durante la sesión | ✅ |
 | RF09 | El sistema debe mostrar los N juegos con más tiempo de juego | ⏳ TP6 |
-| RF10 | El sistema debe mostrar los juegos relacionados con uno dado | ⏳ TP7 |
+| RF10 | El sistema debe mostrar los juegos relacionados con uno dado | ✅ TP7 |
 | RF11 | El sistema debe encontrar el camino de menor costo entre dos juegos | ⏳ TP9 |
 | RF12 | El sistema debe sugerir juegos a partir de uno dado | ⏳ TP10 |
+| RF13 | El sistema debe explorar la red de juegos relacionados: saltos entre dos juegos y grupo conectado | ✅ TP8 |
 
 ### Criterios de aceptación
 
@@ -29,6 +30,13 @@ para videojugadores que quieren decidir a qué jugar sabiendo cuánto tiempo les
 > - "Crab Game", "crab game" y "CRAB GAME" devuelven el mismo juego.
 > - Si el juego no existe, el sistema lo informa y vuelve al menú.
 > - Responde en menos de 1 segundo con 10.000 juegos.
+> - Muestra el nombre, la categoría, los géneros, la duración estimada, el rating y hasta 3 juegos parecidos.
+> - El rating es la proporción de votos positivos de Steam sobre 10. Si el juego tiene menos de 10 votos, lo avisa.
+
+> **RF10 — Juegos relacionados**
+> - Se muestran hasta 10 juegos, del más parecido al menos parecido, con su porcentaje de parecido.
+> - Dos juegos se parecen por los géneros que comparten; los géneros raros pesan más que los comunes.
+> - Un juego añadido durante la sesión también queda relacionado con otros.
 
 > **RF07 — Comparar tiempos**
 > - Se ingresan los nombres uno por línea; una línea vacía termina la lista.

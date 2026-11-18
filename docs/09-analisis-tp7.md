@@ -44,13 +44,7 @@ recorridos y caminos.
 - **Juegos añadidos:** se conectan al grafo con los pesos de géneros actuales, sin recalcular las aristas
   anteriores.
 
-## 5. Errores o dudas que tuvimos
-
-- **Primera idea descartada:** unir todos los juegos que comparten un género. Daba un grafo con 1,5 millones
-  de aristas (sección 3).
-- <COMPLETAR: problemas reales que hayan tenido al integrarlo o al probarlo>
-
-## 6. Datos y evidencia
+## 5. Datos y evidencia
 
 - Código: `estructuras/grafo.py` y `servicios/relaciones.py`.
 - Pruebas: `tests/test_grafo.py` (`py -m unittest discover tests`).

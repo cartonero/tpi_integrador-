@@ -16,6 +16,7 @@ Estructuras que usa cada opción del menú:
     7. Comparar tiempo de juego -> AVL (busca cada juego) y los ordena por tiempo
     8. Añadir un juego         -> Catalogo, BST y AVL (se insertan los tres) y Grafo
     9. Ver juegos relacionados -> AVL (busca el juego) y Grafo (sus vecinos más parecidos)
+   10. Explorar la red         -> AVL (busca el juego) y Grafo, recorrido con BFS y DFS
 
 Convención: las funciones que empiezan con guion bajo (_formatear_juego,
 _navegar_generos, ...) son auxiliares internas de este módulo; las demás
@@ -33,6 +34,8 @@ from servicios.juegos import (
     agregar_juego,
 )
 from servicios.relaciones import incorporar_juego, juegos_relacionados
+from algoritmos.bfs import bfs, bfs_saltos_entre
+from algoritmos.dfs import dfs
 
 
 # ==================== MENÚ PRINCIPAL ====================
@@ -51,6 +54,7 @@ def mostrar_menu():
     print("7. Comparar tiempo de juego de dos o más juegos")
     print("8. Añadir un juego")
     print("9. Ver juegos relacionados")
+    print("10. Explorar la red de juegos (BFS y DFS)")
     print("0. Salir")
     print("-" * 40)
 
@@ -622,6 +626,95 @@ def ejecutar_relacionados(avl, grafo):
               f"{parecido:>4.0%}  {', '.join(vecino.get_generos())}")
 
 
+# ==================== OPCIÓN 10: EXPLORAR LA RED (BFS Y DFS) ====================
+
+SALTOS_MAXIMOS = 2     # hasta cuántos saltos llega la exploración por capas (BFS)
+MUESTRA_POR_CAPA = 6   # cuántos juegos se listan de cada capa
+MUESTRA_GRUPO = 15     # cuántos juegos se listan del recorrido en profundidad (DFS)
+
+
+def _texto_saltos(cantidad):
+    """'1 salto' o '3 saltos'."""
+    return f"{cantidad} salto" if cantidad == 1 else f"{cantidad} saltos"
+
+
+def _mostrar_por_capas(juego, grafo):
+    """BFS: muestra los juegos a 1, 2... saltos del juego de partida."""
+    recorrido = bfs(grafo, juego, max_saltos=SALTOS_MAXIMOS)
+    print(f"\nJuegos a hasta {_texto_saltos(SALTOS_MAXIMOS)} de {juego.get_nombre()}:")
+    for saltos in range(1, SALTOS_MAXIMOS + 1):
+        capa = [vecino for vecino, distancia in recorrido if distancia == saltos]
+        print(f"\n  A {_texto_saltos(saltos)}: {len(capa)} juegos")
+        for vecino in capa[:MUESTRA_POR_CAPA]:
+            print(f"    - {_recortar(vecino.get_nombre(), 40):<40} "
+                  f"{', '.join(vecino.get_generos())}")
+        if len(capa) > MUESTRA_POR_CAPA:
+            print(f"    ... y {len(capa) - MUESTRA_POR_CAPA} más")
+
+
+def _mostrar_saltos_entre(juego, avl, grafo):
+    """BFS: cuenta cuántos saltos hay entre el juego de partida y otro."""
+    nombre = input("Nombre del otro juego: ").strip()
+    otro = _buscar_juego(avl, nombre)
+    if otro is None:
+        print(f"No se encontró ningún juego llamado '{nombre}'.")
+        return
+    if otro is juego:
+        print("Es el mismo juego.")
+        return
+
+    saltos = bfs_saltos_entre(grafo, juego, otro)
+    if saltos is None:
+        print(f"No hay camino entre '{juego.get_nombre()}' y '{otro.get_nombre()}': "
+              "están en grupos de juegos separados.")
+    else:
+        print(f"'{juego.get_nombre()}' y '{otro.get_nombre()}' están a {_texto_saltos(saltos)}.")
+
+
+def _mostrar_grupo(juego, catalogo_total, grafo):
+    """DFS: explora en profundidad todo el grupo de juegos conectados."""
+    recorrido = dfs(grafo, juego)
+    print(f"\n{juego.get_nombre()} está conectado con {len(recorrido) - 1} juegos "
+          f"(de {catalogo_total} en el grafo).")
+    print("Orden de la exploración en profundidad:")
+    for posicion, vecino in enumerate(recorrido[:MUESTRA_GRUPO], 1):
+        print(f"{posicion:>3}. {_recortar(vecino.get_nombre(), 40)}")
+    if len(recorrido) > MUESTRA_GRUPO:
+        print(f"     ... y {len(recorrido) - MUESTRA_GRUPO} más")
+
+
+def ejecutar_explorar_red(avl, grafo):
+    """Explora la red de juegos relacionados desde un juego, con BFS y DFS.
+
+    BFS recorre por capas (sirve para "qué tan cerca está"); DFS se mete hasta
+    el fondo de cada rama (sirve para "qué hay conectado en total").
+    """
+    nombre = input("Nombre del juego de partida: ").strip()
+    juego = _buscar_juego(avl, nombre)
+    if juego is None:
+        print(f"No se encontró ningún juego llamado '{nombre}'.")
+        return
+
+    while True:
+        print(f"\n--- EXPLORAR LA RED desde {juego.get_nombre()} ---")
+        print("1. Juegos a pocos saltos (BFS)")
+        print("2. Cuántos saltos hay hasta otro juego (BFS)")
+        print("3. Explorar todo su grupo en profundidad (DFS)")
+        print("0. Volver al menú principal")
+        opcion = input("Opción: ").strip()
+
+        if opcion == "1":
+            _mostrar_por_capas(juego, grafo)
+        elif opcion == "2":
+            _mostrar_saltos_entre(juego, avl, grafo)
+        elif opcion == "3":
+            _mostrar_grupo(juego, grafo.cantidad_vertices(), grafo)
+        elif opcion == "0":
+            break
+        else:
+            print("Opción inválida, probá de nuevo.")
+
+
 # ==================== BUCLE PRINCIPAL ====================
 
 def iniciar(catalogo, bst, avl, arbol_categorias, grafo):
@@ -653,6 +746,8 @@ def iniciar(catalogo, bst, avl, arbol_categorias, grafo):
             ejecutar_agregar(catalogo, bst, avl, grafo)
         elif opcion == "9":
             ejecutar_relacionados(avl, grafo)
+        elif opcion == "10":
+            ejecutar_explorar_red(avl, grafo)
         elif opcion == "0":
             print("¡Hasta luego!")
             break  # corta el while True y termina el programa

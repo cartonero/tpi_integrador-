@@ -16,7 +16,7 @@ Estructuras que usa cada opción del menú:
     7. Comparar tiempo de juego -> AVL (busca cada juego) y los ordena por tiempo
     8. Añadir un juego         -> Catalogo, BST y AVL (se insertan los tres) y Grafo
     9. Ver juegos relacionados -> AVL (busca el juego) y Grafo (sus vecinos más parecidos)
-   10. Explorar la red         -> AVL (busca el juego) y Grafo, recorrido con BFS y DFS
+    10. Explorar la red         -> AVL (busca el juego) y Grafo, recorrido con BFS y DFS
 
 Convención: las funciones que empiezan con guion bajo (_formatear_juego,
 _navegar_generos, ...) son auxiliares internas de este módulo; las demás

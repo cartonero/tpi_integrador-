@@ -131,6 +131,7 @@ def parte_2_catalogo_real():
 
 
 def main():
+    """Corre las dos partes de la comparación BST contra AVL."""
     parte_1_datos_ordenados()
     parte_2_catalogo_real()
 

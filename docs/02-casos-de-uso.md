@@ -135,4 +135,3 @@ Las líneas punteadas son casos de uso planificados que todavía no existen.
 - **Flujo alternativo**: si algún juego no existe, el sistema lo informa. Si no hay camino entre los dos,
   el sistema avisa que están en grupos separados.
 - **Postcondición**: el jugador sabe qué tan cerca están dos juegos y qué grupo de juegos los rodea.
-

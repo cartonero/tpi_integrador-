@@ -1,3 +1,4 @@
+
 """Pruebas del árbol general y de la jerarquía de categorías."""
 import unittest
 
@@ -33,7 +34,9 @@ class TestArbolGeneral(unittest.TestCase):
 
     def test_buscar(self):
         arbol = _arbol_chico()
-        self.assertEqual(arbol.buscar("A2").dato, "A2")
+        nodo = arbol.buscar("A2")
+        assert nodo is not None
+        self.assertEqual(nodo.dato, "A2")
         self.assertIsNone(arbol.buscar("X"))
 
     def test_arbol_vacio(self):
@@ -45,6 +48,7 @@ class TestArbolGeneral(unittest.TestCase):
 class TestCategorias(unittest.TestCase):
     def test_jerarquia_de_steam(self):
         arbol = construir_arbol_categorias(Catalogo())
+        assert arbol.raiz is not None
         self.assertEqual(arbol.raiz.dato, "Juegoteca")
         self.assertEqual(arbol.listar_hijos(arbol.raiz), list(GRUPOS))
         self.assertEqual(arbol.cantidad_nodos(), 1 + len(GRUPOS) + len(generos_validos()))

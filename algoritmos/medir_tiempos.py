@@ -67,7 +67,7 @@ def busqueda_binaria(lista_ordenada, objetivo):
         medio = (inicio + fin) // 2  # posición central (// es división entera)
         if lista_ordenada[medio] == objetivo:
             return lista_ordenada[medio]
-        elif lista_ordenada[medio] < objetivo:
+        if lista_ordenada[medio] < objetivo:
             inicio = medio + 1  # el objetivo está en la mitad de la derecha
         else:
             fin = medio - 1     # el objetivo está en la mitad de la izquierda
@@ -90,6 +90,7 @@ def medir_ms(funcion, repeticiones=REPETICIONES):
 
 
 def main():
+    """Mide búsqueda secuencial, binaria y en árbol para varios tamaños."""
     pool_completo = cargar_pool_de_juegos(RUTA_DATASET_COMPLETO, max(TAMANOS))
     print(f"Juegos disponibles para la prueba: {len(pool_completo)}\n")
 

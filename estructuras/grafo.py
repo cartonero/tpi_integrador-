@@ -54,7 +54,7 @@ class Grafo:
 
     # ==================== ARISTAS ====================
 
-    def agregar_arista(self, origen, destino, peso=1):
+    def agregar_arista(self, origen, destino, peso: float = 1):
         """Une dos vértices con una arista de un peso dado. O(1).
 
         Como el grafo es no dirigido, la arista se guarda en los dos sentidos.

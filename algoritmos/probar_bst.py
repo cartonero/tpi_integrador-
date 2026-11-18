@@ -17,6 +17,7 @@ from servicios.cargador_datos import cargar_catalogo
 
 
 def main():
+    """Carga el catálogo real y prueba el BST con sus recorridos."""
     # Cargamos el catálogo real (JSON -> objetos Juego).
     catalogo = cargar_catalogo()
     juegos = catalogo.listar()

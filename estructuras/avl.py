@@ -98,13 +98,13 @@ class AVL:
             / \                   / \
            T1  y        ->       z   T3
               / \               / \
-             T2  T3            T1  T2
+             t2  T3            T1  t2
         """
         y = z.derecho       # y es el hijo derecho: va a pasar a ser la nueva raíz
-        T2 = y.izquierdo    # T2 es el subárbol que queda "en el medio"
+        t2 = y.izquierdo    # t2 es el subárbol que queda "en el medio"
 
         y.izquierdo = z     # z baja y queda como hijo izquierdo de y
-        z.derecho = T2      # T2 (que estaba entre z e y) pasa a colgar de z
+        z.derecho = t2      # t2 (que estaba entre z e y) pasa a colgar de z
 
         # Orden importante: primero z (ahora está más abajo) y después y,
         # porque la altura de y depende de la nueva altura de z.
@@ -123,13 +123,13 @@ class AVL:
                 / \             / \
                y   T3   ->     T1   z
               / \                  / \
-             T1  T2               T2  T3
+             T1  t2               t2  T3
         """
         y = z.izquierdo     # y es el hijo izquierdo: va a pasar a ser la nueva raíz
-        T2 = y.derecho      # T2 es el subárbol que queda "en el medio"
+        t2 = y.derecho      # t2 es el subárbol que queda "en el medio"
 
         y.derecho = z       # z baja y queda como hijo derecho de y
-        z.izquierdo = T2    # T2 (que estaba entre y y z) pasa a colgar de z
+        z.izquierdo = t2    # t2 (que estaba entre y y z) pasa a colgar de z
 
         # Mismo orden que en la rotación izquierda: primero z, después y.
         self._actualizar_altura(z)
@@ -360,6 +360,8 @@ def comparar_bst_vs_avl(lista_datos, clave):
 def ejemplo_de_uso():
     """Inserta datos ordenados y compara la altura del BST con la del AVL."""
     class Elemento:
+        """Dato de ejemplo con nombre y valor."""
+
         def __init__(self, nombre, valor):
             self.nombre = nombre
             self.valor = valor

@@ -264,7 +264,7 @@ Verificación: 31 nodos, altura 3, búsquedas correctas. OK
 
 ## 4. Integración con la aplicación
 
-
+```text
 ┌──────────────────────────────────────────────────────────────┐
 │                     Interfaz de terminal                     │
 ├──────────────┬───────────────┬──────────────┬────────────────┤

@@ -51,6 +51,7 @@ def medir_ms(funcion, repeticiones=REPETICIONES):
 
 
 def main():
+    """Corre el desafío de altas masivas y muestra las mediciones."""
     cantidad = int(sys.argv[1]) if len(sys.argv) > 1 else 100_000
     azar = random.Random(2026)  # semilla fija: siempre los mismos nombres
 

@@ -1,3 +1,4 @@
+
 """Pruebas de Juego y Catalogo (modelos/)."""
 import unittest
 
@@ -43,11 +44,15 @@ class TestCatalogo(unittest.TestCase):
         self.assertEqual(self.cat.cantidad(), 3)
 
     def test_buscar_ignora_mayusculas(self):
-        self.assertEqual(self.cat.buscar("CRAB game").get_appid(), "1")
+        encontrado = self.cat.buscar("CRAB game")
+        assert encontrado is not None
+        self.assertEqual(encontrado.get_appid(), "1")
         self.assertIsNone(self.cat.buscar("no existe"))
 
     def test_buscar_por_appid(self):
-        self.assertEqual(self.cat.buscar_por_appid("2").get_nombre(), "Hollow Knight")
+        encontrado = self.cat.buscar_por_appid("2")
+        assert encontrado is not None
+        self.assertEqual(encontrado.get_nombre(), "Hollow Knight")
         self.assertIsNone(self.cat.buscar_por_appid("999"))
 
     def test_filtrar_por_categoria(self):

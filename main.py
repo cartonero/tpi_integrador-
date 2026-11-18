@@ -37,7 +37,7 @@ from ui.terminal import iniciar
 sys.setrecursionlimit(10_000)
 
 
-def construir_arboles(catalogo):
+def construir_arboles(catalogo_juegos):
     """Inserta todos los juegos del catálogo en dos árboles, ordenados por nombre.
 
     - BST (TP3): árbol de búsqueda común. Se mantiene para los recorridos
@@ -49,17 +49,18 @@ def construir_arboles(catalogo):
     # La "clave" es la función que le dice a los árboles POR QUÉ CAMPO
     # ordenar: el nombre del juego en minúsculas. Así "Portal" y "portal"
     # se tratan como el mismo nombre.
-    clave = lambda j: j.get_nombre().lower()
+    def clave(juego):
+        return juego.get_nombre().lower()
 
-    bst = ArbolBST()
-    avl = AVL()
+    arbol_bst = ArbolBST()
+    arbol_avl = AVL()
 
     # Cada juego se inserta en los dos árboles. El AVL se rebalancea solo
     # con rotaciones; el BST no, por eso termina más alto (ver altura abajo).
-    for juego in catalogo.listar():
-        bst.insertar(juego, clave=clave)
-        avl.insertar(juego, clave=clave)
-    return bst, avl
+    for juego in catalogo_juegos.listar():
+        arbol_bst.insertar(juego, clave=clave)
+        arbol_avl.insertar(juego, clave=clave)
+    return arbol_bst, arbol_avl
 
 
 # 1) Carga de datos: JSON -> objetos Juego -> Catalogo.

@@ -21,7 +21,8 @@ class Juego:
     el resto del programa no necesita modificarse.
     """
 
-    def __init__(self, appid, nombre, generos, tiempo_min=0, positivos=0, negativos=0):
+    def __init__(self, appid, nombre, generos,
+                 tiempo_min: int | None = 0, positivos: int | None = 0, negativos: int | None = 0):
         # Identificador único del juego en Steam. El catálogo lo usa para
         # no cargar dos veces el mismo juego.
         self._appid = appid

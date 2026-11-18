@@ -210,6 +210,7 @@ def probar_arbol_general():
 
 
 def main():
+    """Corre todas las pruebas del AVL, una tras otra."""
     probar_rotaciones()
     probar_desbalance()
     probar_avl_catalogo()

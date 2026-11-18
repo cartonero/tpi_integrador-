@@ -1,3 +1,4 @@
+
 """Pruebas del rating de Juego y de la tarjeta que muestra la búsqueda."""
 import unittest
 

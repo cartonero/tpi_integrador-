@@ -27,6 +27,7 @@ para videojugadores que quieren decidir a qué jugar sabiendo cuánto tiempo les
 ### Criterios de aceptación
 
 > **RF01 — Buscar por nombre**
+>
 > - "Crab Game", "crab game" y "CRAB GAME" devuelven el mismo juego.
 > - Si el juego no existe, el sistema lo informa y vuelve al menú.
 > - Responde en menos de 1 segundo con 10.000 juegos.
@@ -34,16 +35,19 @@ para videojugadores que quieren decidir a qué jugar sabiendo cuánto tiempo les
 > - El rating es la proporción de votos positivos de Steam sobre 10. Si el juego tiene menos de 10 votos, lo avisa.
 
 > **RF10 — Juegos relacionados**
+>
 > - Se muestran hasta 10 juegos, del más parecido al menos parecido, con su porcentaje de parecido.
 > - Dos juegos se parecen por los géneros que comparten; los géneros raros pesan más que los comunes.
 > - Un juego añadido durante la sesión también queda relacionado con otros.
 
 > **RF07 — Comparar tiempos**
+>
 > - Se ingresan los nombres uno por línea; una línea vacía termina la lista.
 > - Se necesitan al menos 2 juegos encontrados.
 > - Los juegos sin dato de tiempo se informan aparte y no entran en la comparación.
 
 > **RF08 — Añadir un juego**
+>
 > - El nombre no puede estar vacío ni repetirse.
 > - Los géneros deben pertenecer a la jerarquía de categorías.
 > - El juego nuevo se puede buscar de inmediato, sin reiniciar el programa.

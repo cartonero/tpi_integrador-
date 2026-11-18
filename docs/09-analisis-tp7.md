@@ -32,7 +32,6 @@ recorridos y caminos.
 | **Pesado** | **Sí.** El peso es la **distancia** = 1 − similitud. Vale 0 si dos juegos tienen los mismos géneros y 1 si no comparten ninguno |
 | **Representación** | **Lista de adyacencia** (diccionario de diccionarios) |
 
-
 ## 4. Limitaciones
 
 - **La similitud usa solo géneros.** La muestra no trae desarrolladora, etiquetas ni descripción. Además,

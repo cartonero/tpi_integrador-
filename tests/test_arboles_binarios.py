@@ -1,10 +1,14 @@
+
 """Pruebas del BST y del AVL (estructuras/)."""
+import random
 import unittest
 
 from estructuras.arbol_binario import ArbolBST
 from estructuras.avl import AVL
 
-CLAVE = lambda s: s.lower()
+def CLAVE(texto):
+    """Clave de ordenamiento: el texto en minúsculas."""
+    return texto.lower()
 
 
 def _es_avl_valido(nodo):
@@ -23,7 +27,7 @@ class TestBST(unittest.TestCase):
         for n in ["Matrix", "Inception", "Titanic", "Blade Runner", "Arrival"]:
             arbol.insertar(n, CLAVE)
         self.assertEqual(arbol.inorder(),
-                         ["Arrival", "Blade Runner", "Inception", "Matrix", "Titanic"])
+                            ["Arrival", "Blade Runner", "Inception", "Matrix", "Titanic"])
 
     def test_preorder_y_postorder(self):
         arbol = ArbolBST()
@@ -70,7 +74,6 @@ class TestAVL(unittest.TestCase):
             self.assertEqual(avl.preorder(), ["b", "a", "c"], orden)
 
     def test_mil_datos_ordenados_y_aleatorios(self):
-        import random
         datos = [f"juego{i:05d}" for i in range(1000)]
         for orden in (datos, random.sample(datos, len(datos))):
             avl = AVL()

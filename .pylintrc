@@ -1,0 +1,21 @@
+[MASTER]
+# Reglas del linter (Pylint) para este proyecto.
+# Se ignora la carpeta del dataset completo, que no es código nuestro.
+ignore=lux
+
+[FORMAT]
+max-line-length=120
+
+[BASIC]
+# T1, T2 y T3 son los nombres de los subárboles en los dibujos de las rotaciones del AVL.
+good-names=i,j,k,g,T1,T2,T3,CLAVE
+
+[MESSAGES CONTROL]
+# Avisos de "diseño" y estilo que no aportan en un proyecto de este tamaño:
+#   R0903 pocos métodos públicos (nodos y clases de datos simples)
+#   R0911/R0912/R0913/R0914/R0917 funciones con muchas ramas, argumentos o variables
+#   R0801 código parecido entre archivos (los textos del menú)
+#   C0415 import dentro de una función (se usa a propósito en la comparación BST/AVL)
+#   W0640 variable de un for usada en un lambda que se ejecuta en el mismo ciclo
+#   C3001 lambda asignado a una variable en los scripts de medición
+disable=R0903,R0911,R0912,R0913,R0914,R0917,R0801,C0415,W0640,C3001

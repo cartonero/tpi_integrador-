@@ -10,13 +10,12 @@ Estructuras que usa cada opción del menú:
     1. Buscar juego            -> AVL (búsqueda por nombre, O(log n)) y Grafo (relacionados)
     2. Listar juegos           -> Catalogo (lista completa, paginada)
     3. Filtrar por categoría   -> Catalogo (recorre la lista)
-    4. Ver recorridos del BST  -> BST (inorder, preorder, postorder)
+    4. Extras                  -> submenú con los recorridos del BST y la exploración de la red (BFS y DFS)
     5. Explorar categorías     -> Árbol general (grupos de Steam -> géneros)
     6. Mostrar duración        -> AVL (busca el juego) y su tiempo de juego
     7. Comparar tiempo de juego -> AVL (busca cada juego) y los ordena por tiempo
     8. Añadir un juego         -> Catalogo, BST y AVL (se insertan los tres) y Grafo
     9. Ver juegos relacionados -> AVL (busca el juego) y Grafo (sus vecinos más parecidos)
-    10. Explorar la red         -> AVL (busca el juego) y Grafo, recorrido con BFS y DFS
 
 Convención: las funciones que empiezan con guion bajo (_formatear_juego,
 _navegar_generos, ...) son auxiliares internas de este módulo; las demás
@@ -48,13 +47,12 @@ def mostrar_menu():
     print("1. Buscar juego")
     print("2. Listar juegos")
     print("3. Filtrar por categoría")
-    print("4. Ver recorridos del BST (inorder / preorder / postorder)")
+    print("4. Extras")
     print("5. Explorar categorías")
     print("6. Mostrar duración estimada de un juego")
     print("7. Comparar tiempo de juego de dos o más juegos")
     print("8. Añadir un juego")
     print("9. Ver juegos relacionados")
-    print("10. Explorar la red de juegos (BFS y DFS)")
     print("0. Salir")
     print("-" * 40)
 
@@ -254,7 +252,7 @@ def _formatear_juego(indice, juego, ancho_nombre=45):
     return f"  {indice:>2}. {nombre:<{ancho_nombre}} ({juego.get_categoria_principal()})"
 
 
-# ==================== OPCIÓN 4: RECORRIDOS DEL BST ====================
+# ==================== EXTRAS: RECORRIDOS DEL BST ====================
 
 def ejecutar_recorridos(bst, avl):
     """Muestra los 3 recorridos del BST (TP3), limitados a 15 elementos,
@@ -626,7 +624,7 @@ def ejecutar_relacionados(avl, grafo):
               f"{parecido:>4.0%}  {', '.join(vecino.get_generos())}")
 
 
-# ==================== OPCIÓN 10: EXPLORAR LA RED (BFS Y DFS) ====================
+# ==================== EXTRAS: EXPLORAR LA RED (BFS Y DFS) ====================
 
 SALTOS_MAXIMOS = 2     # hasta cuántos saltos llega la exploración por capas (BFS)
 MUESTRA_POR_CAPA = 6   # cuántos juegos se listan de cada capa
@@ -715,6 +713,31 @@ def ejecutar_explorar_red(avl, grafo):
             print("Opción inválida, probá de nuevo.")
 
 
+# ==================== OPCIÓN 4: EXTRAS ====================
+
+def ejecutar_extras(bst, avl, grafo):
+    """Submenú con las funciones que no son parte del uso diario.
+
+    - Recorridos del BST (TP3): inorder, preorder y postorder.
+    - Explorar la red de juegos (TP8): BFS y DFS sobre el grafo.
+    """
+    while True:
+        print("\n--- EXTRAS ---")
+        print("1. Ver recorridos del BST (inorder / preorder / postorder)")
+        print("2. Explorar la red de juegos (BFS y DFS)")
+        print("0. Volver al menú principal")
+
+        opcion = input("Opción: ").strip()
+        if opcion == "1":
+            ejecutar_recorridos(bst, avl)
+        elif opcion == "2":
+            ejecutar_explorar_red(avl, grafo)
+        elif opcion == "0":
+            return  # vuelve al menú principal
+        else:
+            print("Opción inválida, probá de nuevo.")
+
+
 # ==================== BUCLE PRINCIPAL ====================
 
 def iniciar(catalogo, bst, avl, arbol_categorias, grafo):
@@ -735,7 +758,7 @@ def iniciar(catalogo, bst, avl, arbol_categorias, grafo):
         elif opcion == "3":
             ejecutar_filtrar(catalogo)
         elif opcion == "4":
-            ejecutar_recorridos(bst, avl)
+            ejecutar_extras(bst, avl, grafo)
         elif opcion == "5":
             ejecutar_explorar_categorias(arbol_categorias, catalogo)
         elif opcion == "6":
@@ -746,8 +769,6 @@ def iniciar(catalogo, bst, avl, arbol_categorias, grafo):
             ejecutar_agregar(catalogo, bst, avl, grafo)
         elif opcion == "9":
             ejecutar_relacionados(avl, grafo)
-        elif opcion == "10":
-            ejecutar_explorar_red(avl, grafo)
         elif opcion == "0":
             print("¡Hasta luego!")
             break  # corta el while True y termina el programa

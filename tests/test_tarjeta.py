@@ -1,4 +1,4 @@
-
+# pylint: disable=missing-function-docstring,missing-class-docstring
 """Pruebas del rating de Juego y de la tarjeta que muestra la búsqueda."""
 import unittest
 

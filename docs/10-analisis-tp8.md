@@ -8,7 +8,7 @@ responder preguntas que el grafo solo no contesta:
 - **BFS (en anchura)** responde "¿qué tan cerca está un juego de otro?". Está en `algoritmos/bfs.py`.
 - **DFS (en profundidad)** responde "¿qué hay conectado con este juego, en total?". Está en `algoritmos/dfs.py`.
 
-Se usan desde la opción 10 del menú, "Explorar la red de juegos".
+Se usan desde la opción 4 del menú, "Extras", que tiene un submenú con "Explorar la red de juegos".
 
 ## 2. Los dos casos de uso
 
@@ -84,7 +84,7 @@ corresponde al TP9.
 - **El grafo no es conexo.** Hay 55 grupos de juegos separados (el mayor tiene 538). Por eso BFS puede
   responder "no hay camino" y DFS solo explora el grupo del juego de partida.
 - **Hay grupos muy chicos:** los más chicos tienen unos 6 juegos, así que explorar desde ahí muestra poco.
-- **La opción 10 limita lo que muestra** para que la pantalla sea legible: 6 juegos por capa y 15 en el
+- **La exploración de la red limita lo que muestra** para que la pantalla sea legible: 6 juegos por capa y 15 en el
   recorrido en profundidad. El resto se informa solo como cantidad.
 - **DFS no es iterativo por casualidad:** se escribió con pila explícita y no con recursión porque un grupo
   de 538 juegos encadenados podría pasar el límite de recursión de Python.

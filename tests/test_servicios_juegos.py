@@ -1,4 +1,4 @@
-
+# pylint: disable=missing-function-docstring,missing-class-docstring
 """Pruebas de servicios/juegos.py: duración, comparación y alta de juegos."""
 import unittest
 
@@ -7,8 +7,8 @@ from estructuras.avl import AVL
 from modelos.catalogo import Catalogo
 from modelos.juego import Juego
 from servicios.juegos import (MAX_HORAS, agregar_juego, clave_nombre,
-                                comparar_tiempos, formatear_duracion,
-                                horas_a_minutos, parsear_generos)
+                              comparar_tiempos, formatear_duracion,
+                              horas_a_minutos, parsear_generos)
 
 VALIDOS = ["Action", "Indie", "RPG"]
 

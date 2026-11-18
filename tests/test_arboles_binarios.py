@@ -1,4 +1,4 @@
-
+# pylint: disable=missing-function-docstring,missing-class-docstring
 """Pruebas del BST y del AVL (estructuras/)."""
 import random
 import unittest
@@ -27,7 +27,7 @@ class TestBST(unittest.TestCase):
         for n in ["Matrix", "Inception", "Titanic", "Blade Runner", "Arrival"]:
             arbol.insertar(n, CLAVE)
         self.assertEqual(arbol.inorder(),
-                            ["Arrival", "Blade Runner", "Inception", "Matrix", "Titanic"])
+                         ["Arrival", "Blade Runner", "Inception", "Matrix", "Titanic"])
 
     def test_preorder_y_postorder(self):
         arbol = ArbolBST()

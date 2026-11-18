@@ -11,13 +11,13 @@ graph TD
     U -->|"1"| CU1["Buscar juego"]
     U -->|"2"| CU2["Listar catálogo"]
     U -->|"3"| CU3["Filtrar por categoría"]
-    U -->|"4"| CU4["Ver recorridos del BST"]
+    U -->|"4 Extras"| CU4["Ver recorridos del BST"]
+    U -->|"4 Extras"| CU13["Explorar la red"]
     U -->|"5"| CU5["Explorar categorías"]
     U -->|"6"| CU6["Ver duración estimada"]
     U -->|"7"| CU7["Comparar tiempos"]
     U -->|"8"| CU8["Añadir juego"]
     U -->|"9"| CU9["Ver juegos relacionados"]
-    U -->|"10"| CU13["Explorar la red"]
     CU10["Ver Top N: TP6"]
     CU11["Encontrar camino: TP9"]
     CU12["Pedir recomendación: TP10"]
@@ -62,8 +62,9 @@ Las líneas punteadas son casos de uso planificados que todavía no existen.
 
 - **Actor**: jugador.
 - **Precondición**: el catálogo está cargado.
-- **Flujo principal**: el sistema muestra los primeros juegos según el recorrido inorder (alfabético),
-  preorder y postorder del árbol binario de búsqueda.
+- **Flujo principal**: el jugador entra a Extras (opción 4) y elige los recorridos del BST. El sistema
+  muestra los primeros juegos según el recorrido inorder (alfabético), preorder y postorder del árbol
+  binario de búsqueda.
 - **Postcondición**: el jugador vio cómo cambia el orden según el recorrido.
 
 ## CU5 — Explorar categorías
@@ -126,7 +127,8 @@ Las líneas punteadas son casos de uso planificados que todavía no existen.
 - **Actor**: jugador.
 - **Precondición**: el catálogo y el grafo están cargados.
 - **Flujo principal**:
-  1. El jugador ingresa el nombre del juego de partida (opción 10).
+  1. El jugador entra a Extras (opción 4), elige "Explorar la red de juegos" e ingresa el nombre del juego
+     de partida.
   2. El sistema lo busca en el AVL y abre un submenú.
   3. Con la opción 1, el sistema muestra los juegos a 1 y 2 saltos (BFS).
   4. Con la opción 2, el jugador ingresa otro juego y el sistema informa a cuántos saltos están (BFS).

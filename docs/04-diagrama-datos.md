@@ -68,5 +68,5 @@ El sistema valida primero y modifica después, para no dejar las estructuras en 
 
 ## Fuera de la aplicación
 
-`algoritmos/bfs.py` y `algoritmos/dfs.py` sí se usan desde el menú (opción 10). Los demás scripts de
+`algoritmos/bfs.py` y `algoritmos/dfs.py` sí se usan desde el menú (opción 4, Extras). Los demás scripts de
 `algoritmos/` no forman parte del menú: preparan la muestra, prueban las estructuras y miden tiempos. El dataset completo (`lux/`) solo lo usan ellos y no se sube a GitHub.

@@ -71,7 +71,7 @@ para videojugadores que quieren decidir a qué jugar sabiendo cuánto tiempo les
 
 ## Observaciones
 
-- **Dos árboles de búsqueda a propósito.** Se conserva el BST del TP3 (opción 4) y se usa el AVL para
+- **Dos árboles de búsqueda a propósito.** Se conserva el BST del TP3 (opción 4, Extras) y se usa el AVL para
   buscar (opción 1). Así se puede mostrar en la defensa la diferencia entre un árbol que se degenera y
   uno que se balancea.
 - **"Duración estimada" no es el tiempo para terminar el juego.** Es el tiempo de juego promedio de los

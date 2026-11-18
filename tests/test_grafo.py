@@ -1,4 +1,4 @@
-
+# pylint: disable=missing-function-docstring,missing-class-docstring
 """Pruebas del Grafo y de la construcción del grafo de juegos relacionados."""
 import unittest
 
@@ -6,7 +6,7 @@ from estructuras.grafo import Grafo
 from modelos.catalogo import Catalogo
 from modelos.juego import Juego
 from servicios.relaciones import (construir_grafo_relacionados, incorporar_juego,
-                                    juegos_relacionados, pesos_de_generos, similitud)
+                                  juegos_relacionados, pesos_de_generos, similitud)
 
 
 class TestGrafo(unittest.TestCase):

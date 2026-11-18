@@ -1,4 +1,4 @@
-
+# pylint: disable=missing-function-docstring,missing-class-docstring
 """Pruebas de Juego y Catalogo (modelos/)."""
 import unittest
 

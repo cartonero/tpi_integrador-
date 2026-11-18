@@ -1,4 +1,4 @@
-
+# pylint: disable=missing-function-docstring,missing-class-docstring
 """Pruebas del árbol general y de la jerarquía de categorías."""
 import unittest
 

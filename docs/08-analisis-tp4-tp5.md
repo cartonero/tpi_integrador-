@@ -338,7 +338,7 @@ estricto. Con 31 nodos no se nota.
 - Ninguna se usó "por cumplir": el AVL resuelve un problema real (el
   desbalance que medimos) y el árbol general resuelve otro (la jerarquización
   del dominio, con cantidad variable de hijos).
-- El BST del TP3 se mantiene y sigue funcionando (opción 4 del menú).
+- El BST del TP3 se mantiene y sigue funcionando (opción 4 del menú, Extras).
 
 ## 7. Errores o dudas que tuvimos
 

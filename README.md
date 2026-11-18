@@ -44,13 +44,12 @@ py -m unittest discover tests
 | 1 | Buscar un juego por nombre y ver su tarjeta: duración, rating y juegos parecidos | AVL y grafo |
 | 2 | Listar el catálogo, de a 20 por página | Lista del catálogo |
 | 3 | Filtrar por categoría | Lista del catálogo |
-| 4 | Ver los recorridos inorder, preorder y postorder | BST |
+| 4 | Extras: recorridos del BST (inorder, preorder y postorder) y exploración de la red de juegos (saltos entre dos juegos y grupo conectado) | BST, grafo, BFS y DFS |
 | 5 | Explorar categorías (navegar, ver el árbol, ver por niveles) | Árbol general |
 | 6 | Mostrar la duración estimada de un juego | AVL |
 | 7 | Comparar el tiempo de juego de dos o más juegos | AVL |
 | 8 | Añadir un juego nuevo (solo en memoria, durante la sesión) | Catálogo, BST, AVL y grafo |
 | 9 | Ver los juegos relacionados con uno dado | AVL y grafo |
-| 10 | Explorar la red: saltos entre dos juegos y grupo conectado | AVL, grafo, BFS y DFS |
 
 La **duración estimada** es el tiempo de juego promedio de los jugadores en Steam. No es el tiempo
 necesario para terminar el juego. En la muestra, solo 555 de 2000 juegos tienen ese dato.
@@ -80,7 +79,7 @@ Conviene leerla en este orden:
 4. [Diagrama de clases](docs/03-diagrama-clases.md): qué clases hay y cómo se relacionan.
 5. [Conexión entre estructuras](docs/04-diagrama-datos.md): cómo viajan los datos por el sistema.
 6. [Gestión del proyecto](docs/05-gestion-proyecto.md): tablero, sprints y retrospectivas.
-7. Análisis de cada etapa: [TP2](docs/06-analisis-tp2.md), [TP3: BST](docs/07-analisis-tp3.md) y [TP4 y TP5: AVL y árbol general](docs/08-analisis-tp4-tp5.md) [TP7: grafo](docs/09-analisis-tp7.md) y [TP8: BFS y DFS](docs/10-analisis-tp8.md).
+7. Análisis de cada etapa: [TP2](docs/06-analisis-tp2.md), [TP3: BST](docs/07-analisis-tp3.md) y [TP4 y TP5: AVL y árbol general](docs/08-analisis-tp4-tp5.md), [TP7: grafo](docs/09-analisis-tp7.md) y [TP8: BFS y DFS](docs/10-analisis-tp8.md).
 
 ## Estado del proyecto
 

@@ -94,6 +94,6 @@ Conviene leerla en este orden:
 | TP5 | Árbol general | ✅ |
 | TP6 | Heap (Top N) | ⏳ |
 | TP7 | Grafo de juegos relacionados | ✅ |
-| TP8 | Recorridos BFS y DFS | ⏳ |
+| TP8 | Recorridos BFS y DFS | ✅ |
 | TP9 | Caminos mínimos | ⏳ |
 | TP10 | Recomendador y cierre | ⏳ |
